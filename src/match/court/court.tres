@@ -1,0 +1,102 @@
+[gd_resource type="TileSet" load_steps=5 format=3 uid="uid://bute8fbq6jtxk"]
+
+[ext_resource type="Texture2D" uid="uid://dbbtr71bm5i1" path="res://assets/pixel-hoops/Court.png" id="1_gpy2n"]
+[ext_resource type="Texture2D" uid="uid://t0osvo7vebca" path="res://assets/pixel-hoops/Grass.png" id="2_ygq4y"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ygq4y"]
+texture = ExtResource("1_gpy2n")
+7:5/size_in_atlas = Vector2i(30, 14)
+7:5/0 = 0
+38:0/size_in_atlas = Vector2i(4, 7)
+38:0/0 = 0
+38:8/size_in_atlas = Vector2i(4, 6)
+38:8/0 = 0
+44:8/size_in_atlas = Vector2i(4, 6)
+44:8/0 = 0
+43:0/size_in_atlas = Vector2i(5, 7)
+43:0/0 = 0
+50:0/size_in_atlas = Vector2i(5, 7)
+50:0/0 = 0
+4:4/size_in_atlas = Vector2i(2, 2)
+4:4/0 = 0
+2:4/size_in_atlas = Vector2i(2, 2)
+2:4/0 = 0
+0:4/size_in_atlas = Vector2i(2, 2)
+0:4/0 = 0
+20:2/size_in_atlas = Vector2i(2, 2)
+20:2/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_eivri"]
+texture = ExtResource("2_ygq4y")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+7:7/0 = 0
+
+[resource]
+sources/1 = SubResource("TileSetAtlasSource_ygq4y")
+sources/2 = SubResource("TileSetAtlasSource_eivri")

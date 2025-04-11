@@ -1,0 +1,2 @@
+extends PhysicsBody2D
+class_name Basketball
