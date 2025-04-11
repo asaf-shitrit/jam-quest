@@ -1,9 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cb8hy18vrvpsf"]
+[gd_scene load_steps=5 format=3 uid="uid://cb8hy18vrvpsf"]
 
 [ext_resource type="PackedScene" uid="uid://bjrnxsxsrsqri" path="res://src/match/court/court.tscn" id="1_5vaqo"]
 [ext_resource type="Script" uid="uid://brbqsiufrws83" path="res://src/match/match.gd" id="1_fg311"]
-[ext_resource type="PackedScene" uid="uid://p615165ww115" path="res://src/_global/agents/player/player.tscn" id="2_fg311"]
-[ext_resource type="PackedScene" uid="uid://2cucgduq8ri5" path="res://src/match/action_menu/action_menu.tscn" id="3_7e67n"]
+[ext_resource type="PackedScene" uid="uid://p615165ww115" path="res://src/characters/player/player.tscn" id="2_fg311"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5vaqo"]
 radius = 6.0
@@ -13,12 +12,6 @@ script = ExtResource("1_fg311")
 
 [node name="Court" parent="." instance=ExtResource("1_5vaqo")]
 position = Vector2(-6, 4)
-
-[node name="ActionMenu" parent="." instance=ExtResource("3_7e67n")]
-offset_left = 42.0
-offset_top = 15.0
-offset_right = 42.0
-offset_bottom = 15.0
 
 [node name="Player" parent="." instance=ExtResource("2_fg311")]
 position = Vector2(91, -5)
