@@ -20,7 +20,7 @@ func shot(origin: Vector2, target: BasketArea):
 
 	# Emit a signal or call a method to handle the scoring
 	# For example, you might want to call a method on the game object
-	game.score(target.team, get_last_shot_value())
+	game.score_points(target.team, get_last_shot_value())
 
 func _get_shot_value(distance: float) -> int:
 	if distance > THREE_POINT_SHOT_DISTANCE:
@@ -36,5 +36,5 @@ func _ready() -> void:
 
 func _on_body_entered(body: Node) -> void:
 	if body is BasketArea:
-		game.score(body.team, get_last_shot_value())
+		game.score_points(body.team, get_last_shot_value())
 		print("Scored " + str(get_last_shot_value()) + " points for team " + str(body.team))

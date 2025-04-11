@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d3mkcw64h0vty" path="res://src/characters/player/player.gd" id="1_mtcsl"]
 [ext_resource type="Texture2D" uid="uid://bqhpul6ywbnp0" path="res://assets/pixel-hoops/Character.png" id="2_8vxif"]
-[ext_resource type="Script" uid="uid://fgwmjlkmasdt" path="res://src/characters/player/states/idle.gd" id="3_e1tta"]
+[ext_resource type="Script" uid="uid://lv1qjgjxbmnm" path="res://src/characters/player/stamina_bar.gd" id="3_5c1al"]
 
 [sub_resource type="Animation" id="Animation_4vqyd"]
 length = 0.001
@@ -73,34 +73,17 @@ anim_player = NodePath("../AnimationPlayer")
 position = Vector2(-1, -24)
 shape = SubResource("CapsuleShape2D_mtcsl")
 
-[node name="LimboHSM" type="LimboHSM" parent="."]
-
-[node name="Idle" type="LimboState" parent="LimboHSM"]
-script = ExtResource("3_e1tta")
-
-[node name="IdleDribble" type="LimboState" parent="LimboHSM"]
-
-[node name="Move" type="LimboState" parent="LimboHSM"]
-
-[node name="Shooting" type="LimboState" parent="LimboHSM"]
-
-[node name="Layup" type="LimboState" parent="LimboHSM"]
-
-[node name="DunkBasic" type="LimboState" parent="LimboHSM"]
-
-[node name="ForewardDribble" type="LimboState" parent="LimboHSM"]
-
-[node name="Defending" type="LimboState" parent="LimboHSM"]
-
 [node name="StaminaTimer" type="Timer" parent="."]
 wait_time = 4.0
 autostart = true
 
-[node name="StaminaBar" type="ProgressBar" parent="."]
-offset_left = -19.0
-offset_top = -77.0
-offset_right = 15.0
-offset_bottom = -50.0
-show_percentage = false
+[node name="StaminaBar" type="HBoxContainer" parent="." node_paths=PackedStringArray("progress_timer")]
+offset_left = -20.0
+offset_top = -67.0
+offset_right = 20.0
+offset_bottom = -52.0
+script = ExtResource("3_5c1al")
+progress_timer = NodePath("../StaminaTimer")
+metadata/_custom_type_script = "uid://lv1qjgjxbmnm"
 
 [connection signal="timeout" from="StaminaTimer" to="." method="_on_stamina_timer_timeout"]

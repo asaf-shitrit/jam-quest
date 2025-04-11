@@ -1,6 +1,6 @@
 extends Node
 
 enum Team {
-    A,
-    B,
+	A,
+	B
 }

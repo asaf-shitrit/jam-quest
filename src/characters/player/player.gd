@@ -14,25 +14,20 @@ const JUMP_VELOCITY = -400.0
 @export var max_stamina: int = 3
 var stamina: int = max_stamina
 @onready var stamina_timer = $StaminaTimer
-@onready var stamina_bar = $StaminaBar
+@onready var stamina_bar: StaminaBar = $StaminaBar
 
 # Match variables
-@export var ball: Basketball
 var has_ball: bool = false
 
 func _ready() -> void:
 	
-	stamina_bar.min_value = 0
-	stamina_bar.max_value = max_stamina
-	stamina_bar.step = 1
+	stamina_bar.max_stamina = max_stamina
 	stamina_timer.one_shot = false
 	stamina_timer.wait_time = stamina_recovery_speed_seconds
 
 	if in_match():
-		stamina_bar.visible = true
 		stamina_timer.start()
 	else:
-		stamina_bar.visible = false
 		stamina_timer.stop()
 
 func drive_to_basket(basket: BasketArea):
@@ -57,7 +52,7 @@ func in_match() -> bool:
 	return get_current_match() != null
 
 func _process(_delta: float) -> void:
-	stamina_bar.value = stamina
+	stamina_bar.stamina = stamina
 	
 func _physics_process(delta: float) -> void:
 	if not in_match() and not is_on_floor():

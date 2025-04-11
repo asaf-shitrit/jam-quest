@@ -1,26 +1,35 @@
 [gd_scene load_steps=5 format=3 uid="uid://cb8hy18vrvpsf"]
 
-[ext_resource type="PackedScene" uid="uid://bjrnxsxsrsqri" path="res://src/match/court/court.tscn" id="1_5vaqo"]
+[ext_resource type="PackedScene" uid="uid://bjrnxsxsrsqri" path="res://src/match/court/city/city_court.tscn" id="1_5vaqo"]
 [ext_resource type="Script" uid="uid://brbqsiufrws83" path="res://src/match/match.gd" id="1_fg311"]
-[ext_resource type="PackedScene" uid="uid://p615165ww115" path="res://src/characters/player/player.tscn" id="2_fg311"]
+[ext_resource type="Script" uid="uid://c6jnjaxpr2yjs" path="res://src/match/score_panel.gd" id="4_fg311"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5vaqo"]
 radius = 6.0
 
-[node name="Match" type="Node2D"]
+[node name="Match" type="Node"]
 script = ExtResource("1_fg311")
 
-[node name="Court" parent="." instance=ExtResource("1_5vaqo")]
-position = Vector2(-6, 4)
-
-[node name="Player" parent="." instance=ExtResource("2_fg311")]
-position = Vector2(91, -5)
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-zoom = Vector2(4, 4)
-
 [node name="Area2D" type="Area2D" parent="."]
+position = Vector2(253, -91)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(253, -90)
+visible = false
+position = Vector2(1, 2)
 shape = SubResource("CircleShape2D_5vaqo")
+
+[node name="Court" parent="." instance=ExtResource("1_5vaqo")]
+
+[node name="Players" type="Node" parent="."]
+
+[node name="ScorePanel" type="CenterContainer" parent="."]
+offset_left = 204.0
+offset_top = 63.0
+offset_right = 269.0
+offset_bottom = 103.0
+script = ExtResource("4_fg311")
+metadata/_custom_type_script = "uid://c6jnjaxpr2yjs"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(91, -5)
+zoom = Vector2(4, 4)
