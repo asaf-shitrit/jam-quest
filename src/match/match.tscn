@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cb8hy18vrvpsf"]
+[gd_scene load_steps=6 format=3 uid="uid://cb8hy18vrvpsf"]
 
 [ext_resource type="PackedScene" uid="uid://bjrnxsxsrsqri" path="res://src/match/court/city/city_court.tscn" id="1_5vaqo"]
 [ext_resource type="Script" uid="uid://brbqsiufrws83" path="res://src/match/match.gd" id="1_fg311"]
+[ext_resource type="Script" uid="uid://x0j0idgaje8b" path="res://src/match/current_team_label.gd" id="4_7e67n"]
 [ext_resource type="Script" uid="uid://c6jnjaxpr2yjs" path="res://src/match/score_panel.gd" id="4_fg311"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5vaqo"]
@@ -33,3 +34,11 @@ metadata/_custom_type_script = "uid://c6jnjaxpr2yjs"
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(91, -5)
 zoom = Vector2(4, 4)
+
+[node name="CurrentTeamLabel" type="CenterContainer" parent="."]
+offset_left = 14.0
+offset_top = -91.0
+offset_right = 54.0
+offset_bottom = -75.0
+script = ExtResource("4_7e67n")
+metadata/_custom_type_script = "uid://x0j0idgaje8b"

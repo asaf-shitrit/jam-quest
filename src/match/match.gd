@@ -23,7 +23,6 @@ var currentTeamTurn: Globals.Team
 @export var userControlledTeam: Globals.Team = Globals.Team.A
 @export var ball: Basketball
 
-
 @export var teamA: TeamData
 @export var teamB: TeamData
 
