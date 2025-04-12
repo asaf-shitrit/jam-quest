@@ -8,6 +8,7 @@ const JUMP_VELOCITY = -400.0
 
 # Gameplay variables
 @export var team: Globals.Team
+@export var data: PlayerData
 
 # Stamina variables
 @export var stamina_recovery_speed_seconds = 4

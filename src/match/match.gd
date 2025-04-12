@@ -12,7 +12,8 @@ signal turn_change(team)
 signal turn_finished()
 
 
-@export var court: PackedScene
+@export var court_scene: PackedScene
+var court_node: Court
 
 @export var scoreLimit := 21
 @export var teamLimit := 1
@@ -32,14 +33,49 @@ var is_paused: bool = false
 
 func _ready() -> void:
 	setup_court()
+	setup_players()
 	start_match()
+	update_players_positions()
+	
+	turn_change.connect(handle_turn_change)
+	
+func handle_turn_change():
+	update_players_positions()
+	pass
+	
+func update_players_positions():
+	for i in range(get_team_size()):
+		var player_a := $Players/A.get_child(i)
+		var player_b := $Players/B.get_child(i)
+
+		if currentTeamTurn == Globals.Team.A:
+			player_a.position = court_node.attack_spots[i]
+			player_b.position = court_node.defense_spots[i]
+		else:
+			player_a.position = court_node.defense_spots[i]
+			player_b.position = court_node.attack_spots[i]
+			
+
+func get_team_size():
+	return min(teamA.players.size(), teamB.players.size(), court_node.get_largest_team_size_for_court())
+
+func setup_players():
+	for i in range(get_team_size()):
+		var player_a := Player.new()
+		player_a.team = Globals.Team.A
+		player_a.data = teamA.players[i]
+		$Players/A.add_child(player_a)
+		
+		var player_b := Player.new()
+		player_b.team = Globals.Team.B
+		player_b.data = teamB.players[i]
+		$Players/B.add_child(player_b)
 	
 func setup_court():
-	var court_node := court.instantiate()
+	court_node = court_scene.instantiate()
 	add_child(court_node)
 
 func score_points(team: Globals.Team, points: int) -> void:
-
 	# Check if the match has started
 	if not is_started:
 		print("Match has not started yet.")
@@ -62,11 +98,13 @@ func score_points(team: Globals.Team, points: int) -> void:
 		teamB_Score += points
 	else:
 		print("Invalid team specified for scoring.")
+		
+	# Emit a signal for scoring
+	emit_signal("score", team, points)
 
 	# Check if the match needs to end
 	_check_if_match_needs_to_end()
-	# Emit a signal for scoring
-	emit_signal("score", team, points)
+
 
 func reset_match() -> void:
 	if is_started:
@@ -119,15 +157,12 @@ func start_match() -> void:
 	var starting_team := get_random_team()
 	var captain := get_team_captain(starting_team)
 
-	assert(captain != null, "Captain is null. Ensure players are assigned to teams correctly.")	
+	assert(captain != null, "Captain is null. Ensure players are assigned to teams correctly.")
 
 	currentTeamTurn = starting_team
 
 	teamA_Score = 0
 	teamB_Score = 0
-
-	# Reset the ball position
-	ball.position = Vector2.ZERO
 	
 	is_started = true
 
@@ -135,13 +170,10 @@ func start_match() -> void:
 	emit_signal("match_started", starting_team)
 	
 func get_team_captain(team: Globals.Team) -> Player:
-	var players = $Players.get_children()
-
-	for player in players:
-		if player is Player:
-			if player.team == team:
-				return player
-	return null
+	if team == Globals.Team.A:
+		return $Players/A.get_child(0) as Player
+	else:
+		return $Players/B.get_child(0) as Player
 
 func get_random_team() -> Globals.Team:
 	var team_i := randi_range(0, 1)
@@ -151,7 +183,6 @@ func get_random_team() -> Globals.Team:
 		return Globals.Team.B
 	
 func end_match(winner: Globals.Team):
-	
 	var winnerScore := teamA_Score
 	if winner == Globals.Team.B:
 		winnerScore = teamB_Score
