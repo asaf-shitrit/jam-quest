@@ -33,6 +33,8 @@ var is_started: bool = false
 var is_ended: bool = false
 var is_paused: bool = false
 
+var momentum: float = 0.0
+
 @export var player_scene: PackedScene
 
 @export var disable_turnovers = false

@@ -23,6 +23,7 @@ var basketball_scene = preload("res://src/match/basketball/basketball.tscn")
 # Match variables
 var has_ball: bool = false
 var is_dribbling: bool = true
+var selected_defense_type: DefenseType = DefenseType.None
 
 func _ready() -> void:
 	_setup_stamina_bar()
@@ -115,10 +116,10 @@ func shoot():
 	if not _in_match():
 		print("Player is not in a match")
 		return
-
-	# if stamina < 1:
-	# 	print("not enough stamina")
-	# 	return
+		
+	if stamina < 1:
+		print("not enough stamina")
+		return
 
 	var basket = game.get_active_basket()
 	if basket == null:
@@ -130,11 +131,31 @@ func shoot():
 	bball.origin = position
 	bball.target_basket = basket
 	bball.creator = self
-	game.add_child(bball)
 
 	has_ball = false
 	is_dribbling = false
 	stamina-=1
+	
+	# result
+	var action_chance = get_action_result_chance(self, null, PlayerAction.Shoot)
+	var actual_chance = randf_range(0.0, 100.0)
+	
+	if actual_chance > action_chance:
+		print('missed the shot')
+		var delta = absf(actual_chance - action_chance)
+		var miss_type = Basketball.MissType.Close
+		if delta > 15:
+			miss_type = Basketball.MissType.Airball
+		bball.miss_type = miss_type
+	else:
+		print("made the shot")
+
+	
+	game.add_child(bball)
+
+
+func _defense_type():
+	return 	DefenseType.Tight
 
 func _in_match() -> bool:
 	return game != null
@@ -157,3 +178,116 @@ func _adjust_player_direction():
 func _on_stamina_timer_timeout() -> void:
 	# replenish stamina
 	stamina = min(stamina+1, data.stamina)
+
+
+
+const BASE_CHANCE = 60.0 # the chance to hit a general shoot in percent
+const BASE_ATT_BONUS = 10.0 # this gives a natural bonus to the attacking side
+
+
+
+
+func get_stats_mistatch_on_action(att: Player, def: Player, action: PlayerAction) -> Mismatch:
+	var att_rate = 0
+	var def_rate = 0
+	if action == PlayerAction.Shoot:
+		att_rate = att.data.shooting
+		def_rate = def.data.perimeter_defense
+	elif action == PlayerAction.Drive:
+		att_rate = att.data.finishing
+		def_rate = def.data.interior_defense
+	elif action == PlayerAction.Pass:
+		att_rate = att.data.playmaking
+		def_rate = def.data.perimeter_defense
+	
+	
+	var delta = (att_rate + BASE_ATT_BONUS) - def_rate
+	delta = clampf(delta, 0, 99)
+	
+	if delta < 5:
+		return Mismatch.None
+	elif delta < 20:
+		return Mismatch.Minor
+	else:
+		return Mismatch.Major
+		
+		
+func get_stance_mismatch_on_action(att: Player, def: Player, action: PlayerAction) -> Mismatch:
+	
+	if def._defense_type() == DefenseType.None:
+		return Mismatch.Major # caught off guard
+		
+	if def._defense_type() == DefenseType.Tight and action == PlayerAction.Drive:
+		return Mismatch.Minor # no lane defense
+	
+	if def._defense_type() == DefenseType.Leave and action == PlayerAction.Shoot:
+		return Mismatch.Minor # no hands 
+	
+	return Mismatch.None
+	
+	
+	
+
+func get_action_result_chance(att: Player, def: Player, action: PlayerAction):
+	
+	var chance = BASE_CHANCE
+	
+	# dry stats phase
+	var stats_advantage = get_stats_mistatch_on_action(att, def, action)
+	if stats_advantage == Mismatch.Major:
+		chance += 10
+	elif stats_advantage == Mismatch.Minor:
+		chance += 5
+		
+	# defence stance bonuses phase
+	var stance_advantage = get_stance_mismatch_on_action(att, def, action)
+	if stance_advantage == Mismatch.Major:
+		chance += 10
+	elif stance_advantage == Mismatch.Minor:
+		chance += 5
+	
+	# momentum impact
+	var relative_momentum = game.momentum
+	if team == Globals.Team.B:
+		relative_momentum *= -1
+	
+	# clamp it for safety
+	relative_momentum = clampf(relative_momentum, 0, 15)
+	
+	# add it to chance
+	chance += relative_momentum
+	
+	# final clamp
+	chance = clampf(chance, 0, 99.9)
+	
+	return chance
+	
+	
+		
+		
+		
+		
+enum DefenseType {
+	Tight,
+	Leave,
+	Balanced,
+	None
+}
+	
+enum Mismatch {
+	Minor,
+	Major,
+	None
+}
+
+enum PlayerAction {
+	Shoot,
+	Drive,
+	Pass
+}
+
+enum ActionResult {
+	FailedBadly,
+	Failed,
+	Success
+}
