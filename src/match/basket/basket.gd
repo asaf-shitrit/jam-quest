@@ -1,6 +1,11 @@
-extends Area2D
-class_name BasketArea
+extends Node2D
+class_name Basket
 
-@export var team: Globals.Team
+signal basket_made(ball)
 
-		
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	
+	if body is Basketball:
+		emit_signal("basket_made", body)
+	
+	pass # Replace with function body.

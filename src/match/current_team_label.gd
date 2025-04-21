@@ -16,4 +16,4 @@ func _ready() -> void:
 	_sync_team()
 
 func _sync_team():
-	label.text = "Team %s" % [str(game.currentTeamTurn)]
+	label.text = "Team %s" % [str(game.currentTeamTurn+1)]

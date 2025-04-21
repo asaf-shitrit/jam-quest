@@ -3,26 +3,28 @@ extends Node
 class_name BasketballMatch
 
 signal match_ended(winning_team, score)
-signal match_started(starting_team)
+signal match_started
 signal score(team, points)
 signal match_paused
 signal match_resumed
 signal match_reset
-signal turn_change(team)
-signal turn_finished()
+signal possession_change
 
+enum MatchCourtSize {
+	Half,
+	Full
+}
 
 @export var court_scene: PackedScene
 var court_node: Court
+var camera: Camera2D
 
 @export var scoreLimit := 21
 @export var teamLimit := 1
 var teamA_Score := 0
 var teamB_Score := 0
 
-var currentTeamTurn: Globals.Team
 @export var userControlledTeam: Globals.Team = Globals.Team.A
-@export var ball: Basketball
 
 @export var teamA: TeamData
 @export var teamB: TeamData
@@ -31,49 +33,67 @@ var is_started: bool = false
 var is_ended: bool = false
 var is_paused: bool = false
 
+@export var player_scene: PackedScene
+
+@export var disable_turnovers = false
+
 func _ready() -> void:
 	setup_court()
+	setup_camera()
 	setup_players()
+	setup_game_indicators()
 	start_match()
 	update_players_positions()
 	
-	turn_change.connect(handle_turn_change)
 	
-func handle_turn_change():
-	update_players_positions()
-	pass
+func update_players_positions():	
 	
-func update_players_positions():
+	var team_with_ball = get_team_controlling_ball()
+	
 	for i in range(get_team_size()):
-		var player_a := $Players/A.get_child(i)
-		var player_b := $Players/B.get_child(i)
-
-		if currentTeamTurn == Globals.Team.A:
-			player_a.position = court_node.attack_spots[i]
-			player_b.position = court_node.defense_spots[i]
-		else:
-			player_a.position = court_node.defense_spots[i]
-			player_b.position = court_node.attack_spots[i]
-			
+		#var player_a := $Players.get_child(i)
+		#var player_b := $Players.get_child(i)
+		
+		get_team_players(team_with_ball)[i].position = court_node.attack_spots[i].position
+		get_other_team_players(team_with_ball)[i].position = court_node.defense_spots[i].position
 
 func get_team_size():
-	return min(teamA.players.size(), teamB.players.size(), court_node.get_largest_team_size_for_court())
+	
+	var court_team_limit = court_node.get_largest_team_size_for_court()
+	var team_max_available_per_team = min(teamA.players.size(), teamB.players.size())
+	
+	return min(court_team_limit, team_max_available_per_team)
 
 func setup_players():
 	for i in range(get_team_size()):
-		var player_a := Player.new()
+		var player_a := player_scene.instantiate() as Player
+		player_a.game = self
 		player_a.team = Globals.Team.A
 		player_a.data = teamA.players[i]
-		$Players/A.add_child(player_a)
 		
-		var player_b := Player.new()
+		if userControlledTeam == Globals.Team.B:
+			player_a.hide_stamina = true
+		
+		$Players.add_child(player_a)
+		
+		var player_b := player_scene.instantiate() as Player
+		player_b.game = self
 		player_b.team = Globals.Team.B
 		player_b.data = teamB.players[i]
-		$Players/B.add_child(player_b)
+		
+		if userControlledTeam == Globals.Team.A:
+			player_b.hide_stamina = true
+		
+		$Players.add_child(player_b)
 	
 func setup_court():
 	court_node = court_scene.instantiate()
 	add_child(court_node)
+	
+func setup_camera():
+	camera = Camera2D.new()
+	camera.zoom = Vector2(3.5, 3.5)
+	court_node.add_child(camera)
 
 func score_points(team: Globals.Team, points: int) -> void:
 	# Check if the match has started
@@ -118,9 +138,6 @@ func reset_match() -> void:
 	teamA_Score = 0
 	teamB_Score = 0
 
-	# Reset the ball position
-	ball.position = Vector2.ZERO
-
 	print("Match reset!")
 	emit_signal("match_reset")
 
@@ -148,18 +165,32 @@ func _check_if_match_needs_to_end():
 	elif teamB_Score >= scoreLimit:
 		end_match(Globals.Team.B)
 
+func setup_game_indicators():
+	
+	var team_label := CurrentTeamLabel.new()
+	team_label.game = self
+	team_label.position.y = 60
+	team_label.position.x = 20
+	#add_child(team_label)
+	
+	var score_panel := ScorePanel.new()
+	score_panel.game = self
+	score_panel.position.y = -90
+	score_panel.position.x = 20
+	add_child(score_panel)
+
 func start_match() -> void:
 	if is_started:
 		print("Match already started.")
 		return
 
 	# Randomly assign teams
-	var starting_team := get_random_team()
+	var starting_team := userControlledTeam #get_random_team()
 	var captain := get_team_captain(starting_team)
 
 	assert(captain != null, "Captain is null. Ensure players are assigned to teams correctly.")
 
-	currentTeamTurn = starting_team
+	captain.has_ball = true
 
 	teamA_Score = 0
 	teamB_Score = 0
@@ -167,15 +198,29 @@ func start_match() -> void:
 	is_started = true
 
 	print("Match started!")
-	emit_signal("match_started", starting_team)
-	
-func get_team_captain(team: Globals.Team) -> Player:
-	if team == Globals.Team.A:
-		return $Players/A.get_child(0) as Player
-	else:
-		return $Players/B.get_child(0) as Player
+	emit_signal("match_started")
 
-func get_random_team() -> Globals.Team:
+func _get_players():
+	return $Players.get_children() as Array[Player]
+
+func get_team_players(team: Globals.Team):
+	return _get_players().filter(func (p): return p.team == team)
+
+func get_other_team_players(team: Globals.Team):
+	return _get_players().filter(func (p): return p.team != team)
+	
+func other_team(team: Globals.Team):
+	if team == Globals.Team.A:
+		return Globals.Team.B
+	else:
+		return Globals.Team.A
+
+func get_team_captain(team: Globals.Team) -> Player:
+	var players = get_team_players(team)
+	assert(players.size() >= 1, "team is empty")
+	return players[0]
+
+func get_random_team() -> Globals.Team:	
 	var team_i := randi_range(0, 1)
 	if team_i == 1:
 		return Globals.Team.A
@@ -200,15 +245,52 @@ func _get_winner():
 		return Globals.Team.B
 	else:
 		return null
+	
+	
+const HALFCOURT_PLAYERS_LIMIT = 3
 
-func toggle_current_team():
-	# Toggle the current team turn
-	if currentTeamTurn == Globals.Team.A:
-		currentTeamTurn = Globals.Team.B
-	else:
-		currentTeamTurn = Globals.Team.A
+func get_team_controlling_ball():
+	var players = _get_players()
+	var player_with_ball_index = -1
 
-func finish_turn():
-	toggle_current_team()
-	# Emit a signal for the end of the turn
-	emit_signal("turn_finished")
+	for i in range(players.size()):
+		if players[i].has_ball:
+			player_with_ball_index = i
+			break
+
+	if player_with_ball_index == -1:
+		#print("No player has the ball")
+		return null
+	
+	return players[player_with_ball_index].team
+	
+func get_active_basket():
+	
+	var team_size = max(teamA.players.size(), teamB.players.size())
+	
+	if team_size <= HALFCOURT_PLAYERS_LIMIT:
+		# small teams only halfcourt
+		return court_node.right_basket
+		
+		
+	var team_with_ball = get_team_controlling_ball()
+	
+	if team_with_ball == Globals.Team.A:
+		return court_node.right_basket
+	elif team_with_ball == Globals.Team.B:
+		return court_node.left_basket
+	
+	return null
+	
+func turnover(by: Player):
+	
+	var target_team = other_team(by.team)
+	if disable_turnovers:
+		target_team = by.team
+
+	var captain = get_team_captain(target_team)
+	
+	captain.has_ball = true
+	emit_signal("possession_change")
+	
+	update_players_positions()

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://c7yfcoaalp5vr"]
+
+[ext_resource type="Script" uid="uid://c3et4f0v6cmi3" path="res://src/match/court/spot.gd" id="1_3s3cp"]
+
+[node name="Spot" type="Node2D"]
+script = ExtResource("1_3s3cp")
+
+[node name="Debug" type="Panel" parent="."]
+offset_left = -11.0
+offset_top = -11.0
+offset_right = 11.0
+offset_bottom = 11.0

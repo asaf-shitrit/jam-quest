@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="PlayerData" load_steps=3 format=3 uid="uid://d1rs1d3f7aw3v"]
+
+[ext_resource type="Texture2D" uid="uid://ba5ewpkgjn8am" path="res://assets/pixel-hoops/Character2.png" id="1_sfdvb"]
+[ext_resource type="Script" uid="uid://b7ve1kaquoxeo" path="res://src/resources/player_data.gd" id="2_x4vdm"]
+
+[resource]
+script = ExtResource("2_x4vdm")
+name = "Austin"
+age = 23
+number = "8"
+height = "6.6"
+wingspan = "6.10"
+weight = 189
+shooting = 90
+finishing = 80
+defense = 70
+rebounding = 30
+speed = 70
+strength = 60
+playmaking = 70
+stamina = 1
+character_texture = ExtResource("1_sfdvb")
+metadata/_custom_type_script = "uid://b7ve1kaquoxeo"

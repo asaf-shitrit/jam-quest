@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://c2xt42jn6mut5"]
+
+[ext_resource type="Script" uid="uid://b5ao70y240uvi" path="res://src/match/basketball/basketball.gd" id="1_u2ijx"]
+[ext_resource type="Texture2D" uid="uid://do15svf6lumdo" path="res://assets/pixel-hoops/Ball.png" id="2_kclxf"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_u2ijx"]
+radius = 6.0
+
+[node name="Basketball" type="RigidBody2D"]
+script = ExtResource("1_u2ijx")
+
+[node name="Body" type="Sprite2D" parent="."]
+position = Vector2(-1, -1)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_kclxf")
+offset = Vector2(0.155, 0.155)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_u2ijx")
+
+[node name="TurnoverTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="TurnoverTimer" to="." method="_on_turnover_timer_timeout"]

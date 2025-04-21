@@ -1,40 +1,89 @@
-extends PhysicsBody2D
+extends RigidBody2D
 class_name Basketball
 
-var last_shot_distance := 0.0
-var last_shot_origin := Vector2.ZERO
-
+var game: BasketballMatch
 const THREE_POINT_SHOT_DISTANCE = 7.25
 
-@export var game: BasketballMatch
+@export var origin: Vector2
+@export var target_basket: Basket
+@export var creator: Player
 
-func shot(origin: Vector2, target: BasketArea):
-	var distance = origin.distance_to(target.position)
-	last_shot_distance = distance
-	last_shot_origin = origin
+# how long (in seconds) we want the ball to be in flight
+@export var time_to_target := 0.85
 
-	if distance > THREE_POINT_SHOT_DISTANCE:
-		print("3-point shot attempted from distance: " + str(distance))
+# physics constants and state
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+var _initial_velocity := Vector2.ZERO
+var _elapsed_time := 0.0
+var hit_target := false
+
+func calculate_projectile_velocity(start: Vector2, target: Vector2, time: float) -> Vector2:
+	var dx = target.x - start.x
+	var dy = target.y - start.y
+	var vx = dx / time
+	# solve for initial vy so that y(t)=target.y under constant gravity
+	var vy = (dy - 0.5 * gravity * time * time) / time
+	return Vector2(vx, vy)
+
+func _ready() -> void:
+	# set up collision callback
+	connect("body_entered", _on_body_entered)
+	# figure out our launch velocity so we land in the hoop in exactly time_to_target
+	_initial_velocity = calculate_projectile_velocity(origin, target_basket.position, time_to_target)
+	_elapsed_time = 0.0
+	# start at the origin
+	global_position = origin
+
+func _process(delta: float) -> void:
+	if not origin or not target_basket:
+		visible = false
+		return
+	visible = true
+
+	if hit_target:
+		move_down(delta)
 	else:
-		print("2-point shot attempted from distance: " + str(distance))
+		move_in_arc_to_target(delta)
 
-	# Emit a signal or call a method to handle the scoring
-	# For example, you might want to call a method on the game object
-	game.score_points(target.team, get_last_shot_value())
+func move_in_arc_to_target(delta: float) -> void:
+	_elapsed_time += delta
+	if _elapsed_time > time_to_target:
+		_elapsed_time = time_to_target
+	# s = ut + ½at² in y, plus simple u t in x
+	var pos = origin \
+		+ _initial_velocity * _elapsed_time \
+		+ Vector2(0,  0.5 * gravity * _elapsed_time * _elapsed_time)
+	global_position = pos
+	# if we’ve reached the end of our planned arc, force‐trigger the “hit”
+	if _elapsed_time >= time_to_target:
+		hit_target = true
+
+func move_down(delta: float) -> void:
+	# once through the hoop, just drop straight down
+	# we only need s = ½gt² each frame, but simpler to integrate velocity:
+	# v_y += g * dt; y += v_y * dt
+	# here we'll just advance by ½gt² so it “snaps” a bit more dramatic:
+	global_position.y += 0.5 * gravity * delta * delta
 
 func _get_shot_value(distance: float) -> int:
+	
 	if distance > THREE_POINT_SHOT_DISTANCE:
 		return 3
-	else:
-		return 2
-
-func get_last_shot_value(): 
-	return _get_shot_value(last_shot_distance)
-		
-func _ready() -> void:
-	self.connect("body_entered", _on_body_entered)
+	return 2
+	
 
 func _on_body_entered(body: Node) -> void:
-	if body is BasketArea:
-		game.score_points(body.team, get_last_shot_value())
-		print("Scored " + str(get_last_shot_value()) + " points for team " + str(body.team))
+	if body is Basket:
+		var points := _get_shot_value(origin.distance_to(target_basket.position))
+		game.score_points(body.team, points)
+		hit_target = true
+		# give a moment before freeing
+		await get_tree().create_timer(2).timeout
+		queue_free()
+
+func _on_turnover_timer_timeout() -> void:
+	if not creator:
+		push_error("Basketball: no creator assigned for turnover")
+		return
+	game.turnover(creator)
+	queue_free()

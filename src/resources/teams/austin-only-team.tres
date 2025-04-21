@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TeamData" load_steps=4 format=3 uid="uid://c78xvj0sbrs7o"]
+
+[ext_resource type="Script" uid="uid://b7ve1kaquoxeo" path="res://src/resources/player_data.gd" id="1_gsq4x"]
+[ext_resource type="Resource" uid="uid://d1rs1d3f7aw3v" path="res://src/resources/players/austin.tres" id="2_gsq4x"]
+[ext_resource type="Script" uid="uid://b34pfldtpdfgh" path="res://src/resources/team_data.gd" id="3_1hjxq"]
+
+[resource]
+script = ExtResource("3_1hjxq")
+name = ""
+players = Array[ExtResource("1_gsq4x")]([ExtResource("2_gsq4x")])
+metadata/_custom_type_script = "uid://b34pfldtpdfgh"

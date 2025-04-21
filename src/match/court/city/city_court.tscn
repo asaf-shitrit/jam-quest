@@ -1,12 +1,16 @@
-[gd_scene load_steps=3 format=4 uid="uid://bjrnxsxsrsqri"]
+[gd_scene load_steps=5 format=4 uid="uid://bjrnxsxsrsqri"]
 
 [ext_resource type="TileSet" uid="uid://bute8fbq6jtxk" path="res://src/match/court/court.tres" id="1_6gt8s"]
 [ext_resource type="Script" uid="uid://davcl33y4115e" path="res://src/match/court/court.gd" id="1_182yu"]
+[ext_resource type="PackedScene" uid="uid://kjcswjj683x8" path="res://src/match/basket/basket.tscn" id="3_ivfi4"]
+[ext_resource type="PackedScene" uid="uid://c7yfcoaalp5vr" path="res://src/match/court/spot.tscn" id="3_tsvg2"]
 
-[node name="CityCourt" type="Node" node_paths=PackedStringArray("attack_spots", "defense_spots")]
+[node name="CityCourt" type="Node" node_paths=PackedStringArray("attack_spots", "defense_spots", "right_basket", "left_basket")]
 script = ExtResource("1_182yu")
 attack_spots = [NodePath("Spots/Attacking/Spot1")]
 defense_spots = [NodePath("Spots/Defending/Spot1")]
+right_basket = NodePath("Baskets/RightBasket")
+left_basket = NodePath("Baskets/LeftBasket")
 
 [node name="Assets" type="Node" parent="."]
 
@@ -22,18 +26,22 @@ tile_set = ExtResource("1_6gt8s")
 tile_map_data = PackedByteArray("AAAMAPz/AQArAAAAAAD0//z/AQArAAAAABA=")
 tile_set = ExtResource("1_6gt8s")
 
-[node name="Baskets" type="TileMapLayer" parent="Assets"]
-tile_map_data = PackedByteArray("AAD0//v/AQAEAAQAAAAMAPv/AQAEAAQAAAA=")
-tile_set = ExtResource("1_6gt8s")
-
 [node name="Spots" type="Node" parent="."]
 
 [node name="Attacking" type="Node" parent="Spots"]
 
-[node name="Spot1" type="Node2D" parent="Spots/Attacking"]
-position = Vector2(82, -5)
+[node name="Spot1" parent="Spots/Attacking" instance=ExtResource("3_tsvg2")]
+position = Vector2(71, -8)
 
 [node name="Defending" type="Node" parent="Spots"]
 
-[node name="Spot1" type="Node2D" parent="Spots/Defending"]
-position = Vector2(103, -5)
+[node name="Spot1" parent="Spots/Defending" instance=ExtResource("3_tsvg2")]
+position = Vector2(116, -8)
+
+[node name="Baskets" type="Node" parent="."]
+
+[node name="RightBasket" parent="Baskets" instance=ExtResource("3_ivfi4")]
+position = Vector2(201, -75)
+
+[node name="LeftBasket" parent="Baskets" instance=ExtResource("3_ivfi4")]
+position = Vector2(-185, -75)

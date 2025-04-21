@@ -1,20 +1,24 @@
-[gd_scene format=3 uid="uid://2cucgduq8ri5"]
+[gd_scene load_steps=2 format=3 uid="uid://2cucgduq8ri5"]
 
-[node name="ActionMenu" type="Control"]
+[ext_resource type="Script" uid="uid://eoluir13knfq" path="res://src/match/menus/ball_handler_actions.gd" id="1_r5031"]
+
+[node name="BallHandlerActionsMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_r5031")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 0
 offset_left = -31.0
 offset_top = -73.0
 offset_right = 29.0
+scale = Vector2(0.5, 0.5)
 
-[node name="Button" type="Button" parent="Panel"]
+[node name="ShootButton" type="Button" parent="Panel"]
 layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
@@ -23,7 +27,7 @@ offset_bottom = 35.0
 text = "Shoot
 "
 
-[node name="Button2" type="Button" parent="Panel"]
+[node name="DriveButton" type="Button" parent="Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.508
@@ -36,3 +40,6 @@ offset_right = 26.52
 offset_bottom = 32.5
 text = "Drive
 "
+
+[connection signal="pressed" from="Panel/ShootButton" to="." method="_on_shoot_button_pressed"]
+[connection signal="pressed" from="Panel/DriveButton" to="." method="_on_drive_button_pressed"]
