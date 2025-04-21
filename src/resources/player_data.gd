@@ -24,6 +24,7 @@ class_name PlayerData
 # defense
 @export var interior_defense: int
 @export var perimeter_defense: int
+@export var steal: int
 
 # visuals
 @export var character_texture: Texture2D

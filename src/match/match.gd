@@ -53,9 +53,6 @@ func update_players_positions():
 	var team_with_ball = get_team_controlling_ball()
 	
 	for i in range(get_team_size()):
-		#var player_a := $Players.get_child(i)
-		#var player_b := $Players.get_child(i)
-		
 		get_team_players(team_with_ball)[i].position = court_node.attack_spots[i].position
 		get_other_team_players(team_with_ball)[i].position = court_node.defense_spots[i].position
 
@@ -204,12 +201,15 @@ func start_match() -> void:
 
 func _get_players():
 	return $Players.get_children() as Array[Player]
+	
+func _get_defending_players():
+	return _get_players().filter(func (p: Player): return p.is_on_defense())
 
 func get_team_players(team: Globals.Team):
-	return _get_players().filter(func (p): return p.team == team)
+	return _get_players().filter(func (p: Player): return p.team == team)
 
 func get_other_team_players(team: Globals.Team):
-	return _get_players().filter(func (p): return p.team != team)
+	return _get_players().filter(func (p: Player): return p.team != team)
 	
 func other_team(team: Globals.Team):
 	if team == Globals.Team.A:
@@ -251,7 +251,8 @@ func _get_winner():
 	
 const HALFCOURT_PLAYERS_LIMIT = 3
 
-func get_team_controlling_ball():
+
+func _get_player_with_ball_index():
 	var players = _get_players()
 	var player_with_ball_index = -1
 
@@ -262,9 +263,21 @@ func get_team_controlling_ball():
 
 	if player_with_ball_index == -1:
 		#print("No player has the ball")
+		return -1
+		
+	return player_with_ball_index
+
+func _get_player_with_ball():
+	var index = _get_player_with_ball_index()
+	if index == -1:
 		return null
-	
-	return players[player_with_ball_index].team
+	return _get_players()[index]
+
+func get_team_controlling_ball():
+	var player = _get_player_with_ball()
+	if player == null:
+		return null
+	return player.team
 	
 func get_active_basket():
 	
@@ -283,6 +296,16 @@ func get_active_basket():
 		return court_node.left_basket
 	
 	return null
+	
+	
+const MIN_DEF_DISTANCE = 100
+	
+func get_closest_defending_players(to: Player) -> Array[Player]:
+	var players: Array[Player] = []
+	for player in _get_defending_players():
+		if player.position.distance_to(to.position) < MIN_DEF_DISTANCE:
+			players.push_back(player)
+	return players
 	
 func turnover(by: Player):
 	

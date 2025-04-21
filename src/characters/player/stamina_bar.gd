@@ -11,13 +11,13 @@ class_name StaminaBar
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	position = Vector2(-20, 5)
+	position = Vector2(-15, 5)
 
 	for i in range(max_stamina):
 		var step = ProgressBar.new()
 		
 		step.show_percentage = false
-		step.custom_minimum_size = Vector2(10, 5)
+		step.custom_minimum_size = Vector2(5, 5)
 		step.scale = Vector2(1, 1)
 		step.value = 0
 		step.max_value = progress_timer.wait_time

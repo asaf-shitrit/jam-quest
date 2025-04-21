@@ -5,6 +5,7 @@ var game: BasketballMatch
 const THREE_POINT_SHOT_DISTANCE = 7.25
 
 enum MissType {
+	None,
 	Close,
 	Airball
 }
@@ -12,7 +13,7 @@ enum MissType {
 @export var origin: Vector2
 @export var target_basket: Basket
 @export var creator: Player
-@export var miss_type: MissType
+@export var miss_type: MissType = MissType.None
 
 # how long (in seconds) we want the ball to be in flight
 @export var time_to_target := 0.85
@@ -50,7 +51,7 @@ func _ready() -> void:
 	# figure out our launch velocity so we land in the hoop in exactly time_to_target
 	
 	var actual_target = get_modified_target_position()
-	_initial_velocity = calculate_projectile_velocity(origin, actual_target, time_to_target)
+	_initial_velocity = calculate_projectile_velocity(origin,actual_target, time_to_target)
 	_elapsed_time = 0.0
 	# start at the origin
 	global_position = origin

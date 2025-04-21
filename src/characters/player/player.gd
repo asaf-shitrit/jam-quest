@@ -48,15 +48,21 @@ const MAX_STAMINA = 99.0
 const MIN_STAMINA = 1.0
 const MIN_SECONDS = 3.0
 const MAX_SECONDS = 5.0
+
+const MAX_STAMINA_BARS = 5.0
+const MIN_STAMINA_BARS = 3.0
 	
 func _get_stamina_wait_time():
-	var value := data.stamina
-	var t = clamp(inverse_lerp(MIN_STAMINA, MAX_STAMINA, value), 0.0, 1.0)
+	var t = clamp(inverse_lerp(MIN_STAMINA, MAX_STAMINA, data.stamina), 0.0, 1.0)
 	return lerp(MIN_SECONDS, MAX_SECONDS, t)
 
+func _get_max_stamina():
+	var t = clamp(inverse_lerp(MIN_STAMINA, MAX_STAMINA, data.stamina), 0.0, 1.0)
+	return lerp(MIN_STAMINA_BARS, MAX_STAMINA_BARS, t)
+	
 
 func _setup_stamina_bar():
-	$StaminaBar.max_stamina = data.stamina
+	$StaminaBar.max_stamina = _get_max_stamina()
 	$StaminaTimer.one_shot = false
 	$StaminaTimer.wait_time = _get_stamina_wait_time()
 
@@ -109,6 +115,8 @@ func pass_to_player(player: Player):
 
 func shoot():
 	
+
+	
 	if not has_ball:
 		print("Player doesn't have the ball so he can't shoot it")
 		return
@@ -135,10 +143,14 @@ func shoot():
 	has_ball = false
 	is_dribbling = false
 	stamina-=1
+	$StaminaTimer.start()
 	
 	# result
-	var action_chance = get_action_result_chance(self, null, PlayerAction.Shoot)
+	var defending_players = game.get_closest_defending_players(self)
+	var action_chance = get_action_result_chance(self, defending_players, PlayerAction.Shoot)
 	var actual_chance = randf_range(0.0, 100.0)
+	
+	print("action chance: %d, rolled_chance: %d" % [action_chance, actual_chance])
 	
 	if actual_chance > action_chance:
 		print('missed the shot')
@@ -161,7 +173,13 @@ func _in_match() -> bool:
 	return game != null
 
 func is_on_defense():
-	return game.get_team_controlling_ball() != team
+	
+	var team_with_ball = game.get_team_controlling_ball()
+	
+	if team_with_ball == null:
+		return false 
+	
+	return team_with_ball != team
 		
 func _possesion_change_adjustments():
 	_adjust_player_direction()
@@ -177,7 +195,8 @@ func _adjust_player_direction():
 
 func _on_stamina_timer_timeout() -> void:
 	# replenish stamina
-	stamina = min(stamina+1, data.stamina)
+	stamina += 1
+	stamina = clampf(stamina, 0, _get_max_stamina())
 
 
 
@@ -186,20 +205,32 @@ const BASE_ATT_BONUS = 10.0 # this gives a natural bonus to the attacking side
 
 
 
+func sum(accum, number):
+	return accum + number
 
-func get_stats_mistatch_on_action(att: Player, def: Player, action: PlayerAction) -> Mismatch:
+
+func get_stats_mistatch_on_action(att: Player, def: Array[Player], action: PlayerAction) -> Mismatch:
+	
+	if def == null:
+		return Mismatch.Major
+	
 	var att_rate = 0
 	var def_rate = 0
 	if action == PlayerAction.Shoot:
 		att_rate = att.data.shooting
-		def_rate = def.data.perimeter_defense
 	elif action == PlayerAction.Drive:
 		att_rate = att.data.finishing
-		def_rate = def.data.interior_defense
 	elif action == PlayerAction.Pass:
 		att_rate = att.data.playmaking
-		def_rate = def.data.perimeter_defense
 	
+	for d in def:
+		if action == PlayerAction.Shoot:
+			def_rate += d.data.perimeter_defense
+		elif action == PlayerAction.Drive:
+			def_rate += d.data.interior_defense
+		elif action == PlayerAction.Pass:
+			def_rate += d.data.steal
+
 	
 	var delta = (att_rate + BASE_ATT_BONUS) - def_rate
 	delta = clampf(delta, 0, 99)
@@ -212,23 +243,23 @@ func get_stats_mistatch_on_action(att: Player, def: Player, action: PlayerAction
 		return Mismatch.Major
 		
 		
-func get_stance_mismatch_on_action(att: Player, def: Player, action: PlayerAction) -> Mismatch:
+func get_stance_mismatch_on_action(att: Player, def: Array[Player], action: PlayerAction) -> Mismatch:
 	
-	if def._defense_type() == DefenseType.None:
+	if def == null:
+		return Mismatch.Major
+		
+	if def.all(func (d): d._defense_type() == DefenseType.None):
 		return Mismatch.Major # caught off guard
 		
-	if def._defense_type() == DefenseType.Tight and action == PlayerAction.Drive:
-		return Mismatch.Minor # no lane defense
-	
-	if def._defense_type() == DefenseType.Leave and action == PlayerAction.Shoot:
-		return Mismatch.Minor # no hands 
+	if def.all(func (d): d._defense_type() == DefenseType.Tight) and action == PlayerAction.Drive:
+		return Mismatch.Minor # caught off guard
+		
+	if def.all(func (d): d._defense_type() == DefenseType.Leave) and action == PlayerAction.Shoot:
+		return Mismatch.Minor # caught off guard
 	
 	return Mismatch.None
-	
-	
-	
 
-func get_action_result_chance(att: Player, def: Player, action: PlayerAction):
+func get_action_result_chance(att: Player, def: Array[Player], action: PlayerAction):
 	
 	var chance = BASE_CHANCE
 	

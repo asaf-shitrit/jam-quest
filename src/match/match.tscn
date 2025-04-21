@@ -9,9 +9,6 @@
 [node name="Match" type="Node"]
 script = ExtResource("1_fg311")
 court_scene = ExtResource("2_gwgiy")
-scoreLimit = null
-teamLimit = null
-userControlledTeam = null
 teamA = ExtResource("3_5vaqo")
 teamB = ExtResource("4_7e67n")
 player_scene = ExtResource("4_fg311")
