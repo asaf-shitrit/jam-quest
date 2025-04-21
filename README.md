@@ -1,6 +1,6 @@
-# Godot Project Setup for Windows
+# Jam Quest - Action Turn-Based Basketball Game
 
-This is a simple guide to set up the Godot project on your Windows computer and configure Visual Studio Code (VS Code) for development.
+**Jam Quest** is an action turn-based basketball game with pixel art, developed in Godot. This guide will help you set up the game on your Windows computer and configure Visual Studio Code (VS Code) for development.
 
 ## Prerequisites
 
@@ -66,4 +66,18 @@ If you'd like to export the game for Windows, follow these steps:
 1. In Godot, go to **Project > Export**.
 2. Choose **Windows Desktop** as the target platform.
 3. Click **"Export Project"** and select a location to save the `.exe` file.
-4. Share the `.exe` and accompanying files with
+4. Share the `.exe` and accompanying files with your friends!
+
+## Troubleshooting
+
+- **Missing DLLs**: If you get an error about missing DLLs, make sure you have the necessary Visual C++ Redistributable packages installed. You can download them from [here](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads).
+  
+- **Missing Assets**: If you notice any missing assets, ensure that all files from the repository were cloned correctly.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+If you have any issues or need help, feel free to reach out to the project maintainer.
