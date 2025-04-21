@@ -13,7 +13,7 @@ func _ready() -> void:
 	
 	position = Vector2(-15, 5)
 
-	for i in range(max_stamina):
+	for i in range(1,max_stamina+1):
 		var step = ProgressBar.new()
 		
 		step.show_percentage = false
@@ -27,7 +27,7 @@ func _ready() -> void:
 	
 
 func _process(_delta: float) -> void:
-	for i in range(max_stamina):
+	for i in range(1,max_stamina+1):
 		var step: ProgressBar = get_node("stamina_step_" + str(i))
 
 		if stamina > i:

@@ -77,8 +77,8 @@ func _update_stamina_bar():
 	$StaminaBar.visible = not hide_stamina	
 
 func _update_menus_visibility():
-	$Menus/BallHandlerMenu.visible = has_ball and not is_on_defense()
-	$Menus/OffBallMenu.visible = not has_ball and not is_on_defense()
+	$Menus/BallHandlerMenu.visible = has_ball
+	$Menus/OffBallMenu.visible = game.get_team_controlling_ball() == team and not has_ball
 	
 func _sync_animation_tree():
 	$AnimationTree.set("parameters/conditions/in_match", _in_match())
@@ -200,7 +200,7 @@ func _on_stamina_timer_timeout() -> void:
 
 
 
-const BASE_CHANCE = 60.0 # the chance to hit a general shoot in percent
+const BASE_CHANCE = 40.0 # the chance to hit a general shoot in percent
 const BASE_ATT_BONUS = 10.0 # this gives a natural bonus to the attacking side
 
 
