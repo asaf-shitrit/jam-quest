@@ -52,6 +52,9 @@ func update_players_positions():
 	
 	var team_with_ball = get_team_controlling_ball()
 	
+	if team_with_ball == null:
+		return
+	
 	for i in range(get_team_size()):
 		get_team_players(team_with_ball)[i].position = court_node.attack_spots[i].position
 		get_other_team_players(team_with_ball)[i].position = court_node.defense_spots[i].position

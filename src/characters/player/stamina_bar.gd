@@ -2,36 +2,43 @@ extends HBoxContainer
 
 class_name StaminaBar
 
-@export var progress_timer: Timer
-@export var max_stamina := 3
-@export var stamina:= 0
+@export var player: Player
+@export var basketball_texture: Texture2D
+@export var full_opacity: float = 0.8
+@export var empty_opacity: float = 0.2
 
+var stamina_icons: Array[TextureRect] = []
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
-	position = Vector2(-15, 5)
+	self.add_theme_constant_override("separation", 0)
+	_update_stamina_display()
 
-	for i in range(1,max_stamina+1):
-		var step = ProgressBar.new()
-		
-		step.show_percentage = false
-		step.custom_minimum_size = Vector2(5, 5)
-		step.scale = Vector2(1, 1)
-		step.value = 0
-		step.max_value = progress_timer.wait_time
-		step.name = "stamina_step_" + str(i)
-
-		add_child(step)
-	
 
 func _process(_delta: float) -> void:
-	for i in range(1,max_stamina+1):
-		var step: ProgressBar = get_node("stamina_step_" + str(i))
+	_update_stamina_display()
 
-		if stamina > i:
-			step.value = step.max_value
-		else:
-			step.value = step.max_value - progress_timer.time_left 
-			break
+
+func _update_stamina_display() -> void:
+	var current_stamina = player.stamina
+	var max_stamina = player._get_max_stamina()
+
+	if stamina_icons.size() != max_stamina:
+		# Clear and recreate icons
+		for icon in stamina_icons:
+			remove_child(icon)
+			icon.queue_free()
+		stamina_icons.clear()
+
+		for i in range(max_stamina):
+			var icon = TextureRect.new()
+			icon.texture = basketball_texture
+			icon.expand = true
+			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icon.custom_minimum_size = Vector2(12, 12)  # instead of 16x16
+			icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			
+			add_child(icon)
+			stamina_icons.append(icon)
+
+	for i in range(max_stamina):
+		stamina_icons[i].modulate.a = full_opacity if i < current_stamina else empty_opacity

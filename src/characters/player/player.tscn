@@ -1,4 +1,4 @@
-[gd_scene load_steps=77 format=3 uid="uid://p615165ww115"]
+[gd_scene load_steps=82 format=3 uid="uid://p615165ww115"]
 
 [ext_resource type="Script" uid="uid://d3mkcw64h0vty" path="res://src/characters/player/player.gd" id="1_mtcsl"]
 [ext_resource type="Resource" uid="uid://budfyq22k6y26" path="res://src/resources/players/bronny.tres" id="2_qf5tv"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://4pyk43idwcaj" path="res://src/characters/player/animation_tree.gd" id="4_50u7j"]
 [ext_resource type="Texture2D" uid="uid://ba5ewpkgjn8am" path="res://assets/pixel-hoops/Character2.png" id="4_hhaut"]
 [ext_resource type="PackedScene" uid="uid://chswql01u75s4" path="res://src/match/menus/offball_actions.tscn" id="5_hhnms"]
+[ext_resource type="Texture2D" uid="uid://do15svf6lumdo" path="res://assets/pixel-hoops/Ball.png" id="6_50u7j"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qf5tv"]
 line_spacing = 1.0
@@ -428,13 +429,12 @@ graph_offset = Vector2(-253, -50)
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wq4by"]
 animation = &"jab"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_50u7j"]
+animation = &"shoot"
+
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_p4xxa"]
 advance_mode = 2
 advance_expression = "is_dribbling == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sks4s"]
-advance_mode = 2
-advance_expression = "has_ball == false"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gt173"]
 advance_mode = 2
@@ -452,13 +452,32 @@ advance_expression = "is_dribbling == false"
 advance_mode = 2
 advance_expression = "has_ball == false"
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_irc3h"]
+advance_mode = 2
+advance_expression = "is_shooting == true"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kkwog"]
+advance_mode = 2
+advance_expression = "is_shooting == true"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sks4s"]
+advance_mode = 2
+advance_expression = "has_ball == false"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gu7uu"]
+switch_mode = 2
+advance_mode = 2
+advance_expression = "is_shooting == false"
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_10gxj"]
 states/Dribble/node = SubResource("AnimationNodeStateMachine_co8yl")
-states/Dribble/position = Vector2(516.667, 86.6667)
+states/Dribble/position = Vector2(389.167, -86.8333)
 states/Jab/node = SubResource("AnimationNodeAnimation_wq4by")
 states/Jab/position = Vector2(524.667, 239.333)
-transitions = ["Jab", "Dribble", SubResource("AnimationNodeStateMachineTransition_p4xxa"), "Dribble", "End", SubResource("AnimationNodeStateMachineTransition_sks4s"), "Start", "Dribble", SubResource("AnimationNodeStateMachineTransition_gt173"), "Start", "Jab", SubResource("AnimationNodeStateMachineTransition_2irhy"), "Dribble", "Jab", SubResource("AnimationNodeStateMachineTransition_8knvk"), "Jab", "End", SubResource("AnimationNodeStateMachineTransition_10gxj")]
-graph_offset = Vector2(-220, -52)
+states/shoot/node = SubResource("AnimationNodeAnimation_50u7j")
+states/shoot/position = Vector2(721.615, -125.16)
+transitions = ["Jab", "Dribble", SubResource("AnimationNodeStateMachineTransition_p4xxa"), "Start", "Dribble", SubResource("AnimationNodeStateMachineTransition_gt173"), "Start", "Jab", SubResource("AnimationNodeStateMachineTransition_2irhy"), "Dribble", "Jab", SubResource("AnimationNodeStateMachineTransition_8knvk"), "Jab", "End", SubResource("AnimationNodeStateMachineTransition_10gxj"), "Dribble", "shoot", SubResource("AnimationNodeStateMachineTransition_irc3h"), "Jab", "shoot", SubResource("AnimationNodeStateMachineTransition_kkwog"), "Dribble", "End", SubResource("AnimationNodeStateMachineTransition_sks4s"), "shoot", "End", SubResource("AnimationNodeStateMachineTransition_gu7uu")]
+graph_offset = Vector2(28.115, -185.763)
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6i1ol"]
 advance_mode = 2
@@ -490,7 +509,7 @@ states/Offball/position = Vector2(467.333, 59.3333)
 states/Onball/node = SubResource("AnimationNodeStateMachine_10gxj")
 states/Onball/position = Vector2(466.667, 183.333)
 transitions = ["Onball", "Offball", SubResource("AnimationNodeStateMachineTransition_6i1ol"), "Offball", "Onball", SubResource("AnimationNodeStateMachineTransition_duji1"), "Offball", "End", SubResource("AnimationNodeStateMachineTransition_020ow"), "Onball", "End", SubResource("AnimationNodeStateMachineTransition_grn1g"), "Start", "Offball", SubResource("AnimationNodeStateMachineTransition_5h721"), "Start", "Onball", SubResource("AnimationNodeStateMachineTransition_4dxc1")]
-graph_offset = Vector2(-74, -70)
+graph_offset = Vector2(101.14, -169.225)
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_otj2h"]
 advance_mode = 2
@@ -526,10 +545,10 @@ advance_expression = "in_match == false"
 states/Defense/node = SubResource("AnimationNodeStateMachine_020ow")
 states/Defense/position = Vector2(494.955, 328)
 states/Offense/node = SubResource("AnimationNodeStateMachine_7020a")
-states/Offense/position = Vector2(494.955, 46)
+states/Offense/position = Vector2(518.455, 27)
 states/Start/position = Vector2(207.333, 120)
 transitions = ["Start", "Offense", SubResource("AnimationNodeStateMachineTransition_otj2h"), "Start", "Defense", SubResource("AnimationNodeStateMachineTransition_gplkj"), "Defense", "Offense", SubResource("AnimationNodeStateMachineTransition_1k6q5"), "Offense", "Defense", SubResource("AnimationNodeStateMachineTransition_5tftc"), "Offense", "End", SubResource("AnimationNodeStateMachineTransition_i4ppf"), "Defense", "End", SubResource("AnimationNodeStateMachineTransition_ej0fg"), "Start", "End", SubResource("AnimationNodeStateMachineTransition_qf5tv")]
-graph_offset = Vector2(-170, -70)
+graph_offset = Vector2(5.13999, -94.525)
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wn5t5"]
 advance_mode = 2
@@ -550,7 +569,7 @@ states/Match/node = SubResource("AnimationNodeStateMachine_o2nns")
 states/Match/position = Vector2(1048.52, 175.333)
 states/Start/position = Vector2(688.444, 46.6191)
 transitions = ["Explore", "Match", SubResource("AnimationNodeStateMachineTransition_wn5t5"), "Match", "Explore", SubResource("AnimationNodeStateMachineTransition_3w76t"), "Start", "Explore", SubResource("AnimationNodeStateMachineTransition_q6sbs")]
-graph_offset = Vector2(231, -197)
+graph_offset = Vector2(479.195, -119.42)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mtcsl"]
 height = 46.0
@@ -604,13 +623,14 @@ shape = SubResource("CapsuleShape2D_mtcsl")
 wait_time = 4.0
 autostart = true
 
-[node name="StaminaBar" type="HBoxContainer" parent="." node_paths=PackedStringArray("progress_timer")]
-offset_left = -20.0
-offset_top = -67.0
-offset_right = 20.0
-offset_bottom = -52.0
+[node name="StaminaBar" type="HBoxContainer" parent="." node_paths=PackedStringArray("player")]
+offset_left = -22.0
+offset_top = 5.0
+offset_right = 18.0
+offset_bottom = 20.0
 script = ExtResource("3_5c1al")
-progress_timer = NodePath("../StaminaTimer")
+player = NodePath("..")
+basketball_texture = ExtResource("6_50u7j")
 metadata/_custom_type_script = "uid://lv1qjgjxbmnm"
 
 [node name="Menus" type="Control" parent="."]
@@ -637,5 +657,9 @@ offset_right = -13.0
 offset_bottom = 4.0
 player = NodePath("../..")
 
+[node name="ShootResetTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="timeout" from="AnimationTree/IdleDribbleVarientTimer" to="AnimationTree" method="_on_dribble_varient_timer_timeout"]
 [connection signal="timeout" from="StaminaTimer" to="." method="_on_stamina_timer_timeout"]
+[connection signal="timeout" from="ShootResetTimer" to="." method="_on_shoot_reset_timer_timeout"]

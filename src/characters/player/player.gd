@@ -23,6 +23,7 @@ var basketball_scene = preload("res://src/match/basketball/basketball.tscn")
 # Match variables
 var has_ball: bool = false
 var is_dribbling: bool = true
+var is_shooting: bool = false
 var selected_defense_type: DefenseType = DefenseType.None
 
 func _ready() -> void:
@@ -40,7 +41,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	_update_stamina_bar()
 	_update_menus_visibility()
-	_sync_animation_tree()
 	velocity = Vector2.ZERO
 	
 	
@@ -62,7 +62,7 @@ func _get_max_stamina():
 	
 
 func _setup_stamina_bar():
-	$StaminaBar.max_stamina = _get_max_stamina()
+	print("max stamina %d" % _get_max_stamina())
 	$StaminaTimer.one_shot = false
 	$StaminaTimer.wait_time = _get_stamina_wait_time()
 
@@ -73,19 +73,11 @@ func _setup_stamina_bar():
 	
 
 func _update_stamina_bar():
-	$StaminaBar.stamina = stamina
 	$StaminaBar.visible = not hide_stamina	
 
 func _update_menus_visibility():
 	$Menus/BallHandlerMenu.visible = has_ball
 	$Menus/OffBallMenu.visible = game.get_team_controlling_ball() == team and not has_ball
-	
-func _sync_animation_tree():
-	$AnimationTree.set("parameters/conditions/in_match", _in_match())
-	$AnimationTree.set("parameters/Match/conditions/on_defense", is_on_defense())
-	$AnimationTree.set("parameters/Match/Offense/conditions/has_ball", has_ball)
-	$AnimationTree.set("parameters/Match/Offense/Onball/conditions/is_dribbling", is_dribbling)
-	
 	
 func _physics_process(delta: float) -> void:
 	if not _in_match() and not is_on_floor():
@@ -114,9 +106,6 @@ func pass_to_player(player: Player):
 	
 
 func shoot():
-	
-
-	
 	if not has_ball:
 		print("Player doesn't have the ball so he can't shoot it")
 		return
@@ -134,9 +123,14 @@ func shoot():
 		print("No active basket")
 		return
 		
+	is_shooting = true
+	$ShootResetTimer.start()
+	
+	await get_tree().create_timer(0.6).timeout
+		
 	var bball: Basketball = basketball_scene.instantiate()
 	bball.game = game
-	bball.origin = position
+	bball.origin = position + Vector2(-1,-20)
 	bball.target_basket = basket
 	bball.creator = self
 
@@ -164,6 +158,7 @@ func shoot():
 
 	
 	game.add_child(bball)
+	velocity = Vector2.ZERO  # Optional precaution
 
 
 func _defense_type():
@@ -196,7 +191,11 @@ func _adjust_player_direction():
 func _on_stamina_timer_timeout() -> void:
 	# replenish stamina
 	stamina += 1
-	stamina = clampf(stamina, 0, _get_max_stamina())
+	var max_stamina = _get_max_stamina()
+	stamina = clampf(stamina, 0, max_stamina)
+	print("stamina %d" % stamina)
+	print("max stamina %d" % max_stamina)
+
 
 
 
@@ -322,3 +321,7 @@ enum ActionResult {
 	Failed,
 	Success
 }
+
+
+func _on_shoot_reset_timer_timeout():
+	is_shooting = false

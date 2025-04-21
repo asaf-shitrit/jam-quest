@@ -7,6 +7,7 @@ extends AnimationTree
 @export var is_dribbling: bool
 @export var in_match: bool
 @export var has_ball: bool
+@export var is_shooting: bool
 
 @export var change_idle_dribble = true
 var ready_time = 0
@@ -19,13 +20,13 @@ func _process(_delta: float) -> void:
 	
 	if debug:
 		return
-		
 	
 	# sync to actual player
 	on_defense = player.is_on_defense()
 	is_dribbling = player.is_dribbling
 	in_match = player._in_match()
 	has_ball = player.has_ball
+	is_shooting = player.is_shooting
 	
 
 func start_timer():

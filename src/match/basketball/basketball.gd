@@ -61,13 +61,6 @@ func _ready() -> void:
 	global_position = origin
 
 func _process(delta: float) -> void:
-	if miss_type != MissType.None:
-		$Body.z_index = 3
-
-	if not origin or not target_basket:
-		visible = false
-		return
-	visible = true
 
 	if did_bounce:
 		move_after_bounce(delta)
@@ -99,10 +92,6 @@ func move_after_bounce(delta: float) -> void:
 	# Apply gravity
 	post_bounce_velocity.y += gravity * delta
 	global_position += post_bounce_velocity * delta
-
-	# Optionally delete after short time
-	if global_position.y > 550:# or any value below the court
-		queue_free()
 
 
 func move_down(delta: float) -> void:
