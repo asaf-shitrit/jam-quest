@@ -85,12 +85,6 @@ func _update_menus_visibility():
 	$Menus/BallHandlerMenu.visible = has_ball
 	$Menus/OffBallMenu.visible = game.get_team_controlling_ball() == team and not has_ball
 	
-func _physics_process(delta: float) -> void:
-	if not _in_match() and not is_on_floor():
-		velocity += get_gravity() * delta
-	
-	move_and_slide()
-
 func drive_to_basket():
 	if not has_ball:
 		print("Player doesn't have the ball so he can't drive")
