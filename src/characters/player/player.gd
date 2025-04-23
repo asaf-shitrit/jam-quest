@@ -3,7 +3,7 @@ extends CharacterBody2D
 class_name Player
 
 # Locomotion variables
-const SPEED = 300.0
+const SPEED = 120
 const JUMP_VELOCITY = -400.0
 
 # Gameplay variables
@@ -42,13 +42,52 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	_update_stamina_bar()
 	_update_menus_visibility()
-	velocity = Vector2.ZERO
 	
+	
+	
+	
+var arrived_at_basket = false
+var has_jumped_at_basket = false  # Make sure to reset this when needed
+
+
 func _physics_process(delta: float) -> void:
 	if not _in_match() and not is_on_floor():
 		velocity += get_gravity() * delta
-	
+
+	if is_driving:
+		var active_basket = game.get_active_basket()
+		if active_basket != null:
+			var basket_target = active_basket.position + Vector2(0, 100)
+			var stop_distance = 20.0  # How close to get before stopping
+			var max_drive_distance = 400.0
+
+			var to_target = basket_target - position
+			print("distance to target %d" % to_target.x)
+			var distance = to_target.length()
+
+			if distance <= stop_distance:
+				# ✅ ARRIVED: stop moving and end drive
+				arrived_at_basket = true
+				velocity.x = lerp(velocity.x, 0, 0.3)
+				
+				# ✨ Add a jump when reaching the basket
+				if not has_jumped_at_basket:
+					velocity.y += -500  # Adjust value based on gravity/jump strength
+					has_jumped_at_basket = true
+			else:
+				# 🏃 Driving toward basket with curved acceleration
+				arrived_at_basket = false
+				var direction = to_target.normalized()
+				var drive_force = SPEED * _drive_curve(distance, max_drive_distance)
+				velocity.x = lerp(velocity.x, direction.x * drive_force, 0.1)
+
+
 	move_and_slide()
+
+func _drive_curve(distance: float, max_distance: float) -> float:
+	var t = clamp(distance / max_distance, 0.0, 1.0)
+	return 1.0 - pow(t, 2)  # Fast start, slow near basket
+
 	
 const MAX_STAMINA = 99.0
 const MIN_STAMINA = 1.0
@@ -90,6 +129,9 @@ func drive_to_basket():
 		print("Player doesn't have the ball so he can't drive")
 		return
 	
+	collision_layer = 0
+	collision_mask = 0
+	z_index = 3
 	is_driving = true
 	$DriveTimer.start()
 
@@ -123,21 +165,34 @@ func shoot():
 		print("not enough stamina")
 		return
 
+	
+
+	is_shooting = true
+	$ShootResetTimer.start()
+	await get_tree().create_timer(0.6).timeout
+	
+	_shoot(PlayerAction.Shoot)
+
+
+# raw version of shoot used for both layups and jumpers
+func _shoot(action: PlayerAction):
+	
+	assert(action != PlayerAction.Pass, "Passing aint considered a shot")
+	
 	var basket = game.get_active_basket()
 	if basket == null:
 		print("No active basket")
 		return
-		
-	is_shooting = true
-	$ShootResetTimer.start()
 	
-	await get_tree().create_timer(0.6).timeout
-		
 	var bball: Basketball = basketball_scene.instantiate()
 	bball.game = game
 	bball.origin = position + Vector2(-1,-20)
 	bball.target_basket = basket
 	bball.creator = self
+	if action == PlayerAction.Shoot:
+		bball.shot_type = Basketball.ShotType.Jumper
+	elif action == PlayerAction.Drive:
+		bball.shot_type = Basketball.ShotType.Layup
 
 	has_ball = false
 	is_dribbling = false
@@ -146,7 +201,7 @@ func shoot():
 	
 	# result
 	var defending_players = game.get_closest_defending_players(self)
-	var action_chance = get_action_result_chance(self, defending_players, PlayerAction.Shoot)
+	var action_chance = get_action_result_chance(self, defending_players, action)
 	var actual_chance = randf_range(0.0, 100.0)
 	
 	print("action chance: %d, rolled_chance: %d" % [action_chance, actual_chance])
@@ -163,8 +218,6 @@ func shoot():
 
 	
 	game.add_child(bball)
-	velocity = Vector2.ZERO  # Optional precaution
-
 
 func _defense_type():
 	return 	DefenseType.Tight
@@ -329,4 +382,9 @@ func _on_shoot_reset_timer_timeout():
 	
 func _on_drive_timer_timeout() -> void:
 	is_driving = false
-	has_ball = false
+	
+	collision_layer = 1
+	collision_mask = 1
+	z_index = 1
+	
+	_shoot(PlayerAction.Drive)

@@ -10,6 +10,12 @@ enum MissType {
 	Airball
 }
 
+enum ShotType {
+	Layup,
+	Jumper,
+	Lob
+}
+
 var did_bounce := false
 var post_bounce_velocity := Vector2.ZERO
 
@@ -18,15 +24,27 @@ var post_bounce_velocity := Vector2.ZERO
 @export var target_basket: Basket
 @export var creator: Player
 @export var miss_type: MissType = MissType.None
+@export var shot_type: ShotType = ShotType.Jumper
 
 # how long (in seconds) we want the ball to be in flight
-@export var time_to_target := 0.85
+#@export var time_to_target := 0.85
 
 # physics constants and state
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _initial_velocity := Vector2.ZERO
 var _elapsed_time := 0.0
 var hit_target := false
+
+
+func _get_time_to_target():
+	match shot_type:
+		ShotType.Layup:
+			return 0.5
+		ShotType.Jumper:
+			return 0.85
+		ShotType.Lob:
+			return 0.5
+
 
 func get_modified_target_position() -> Vector2:
 	var base_target = target_basket.position
@@ -55,10 +73,16 @@ func _ready() -> void:
 	# figure out our launch velocity so we land in the hoop in exactly time_to_target
 	
 	var actual_target = get_modified_target_position()
-	_initial_velocity = calculate_projectile_velocity(origin,actual_target, time_to_target)
+	_initial_velocity = calculate_projectile_velocity(origin,actual_target, _get_time_to_target())
 	_elapsed_time = 0.0
 	# start at the origin
 	global_position = origin
+	
+	if miss_type == MissType.None:
+		$TurnoverTimer.start(3)
+	else:
+		$TurnoverTimer.start(3)
+		
 
 func _process(delta: float) -> void:
 
@@ -79,7 +103,7 @@ func move_in_arc_to_target(delta: float) -> void:
 		+ Vector2(0, 0.5 * gravity * _elapsed_time * _elapsed_time)
 	global_position = pos
 
-	if _elapsed_time >= time_to_target:
+	if _elapsed_time >= _get_time_to_target():
 		# Miss: bounce off rim and continue with reduced velocity
 		if miss_type != MissType.None:
 			did_bounce = true
@@ -123,3 +147,4 @@ func _on_turnover_timer_timeout() -> void:
 		push_error("Basketball: no creator assigned for turnover")
 		return
 	game.turnover(creator)
+	queue_free()

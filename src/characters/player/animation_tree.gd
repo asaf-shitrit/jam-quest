@@ -8,6 +8,8 @@ extends AnimationTree
 @export var in_match: bool
 @export var has_ball: bool
 @export var is_shooting: bool
+@export var is_driving: bool
+@export var is_dunking: bool
 
 @export var change_idle_dribble = true
 var ready_time = 0
@@ -27,6 +29,8 @@ func _process(_delta: float) -> void:
 	in_match = player._in_match()
 	has_ball = player.has_ball
 	is_shooting = player.is_shooting
+	is_driving = player.is_driving
+	is_dunking = false
 	
 
 func start_timer():

@@ -56,8 +56,15 @@ func update_players_positions():
 		return
 	
 	for i in range(get_team_size()):
-		get_team_players(team_with_ball)[i].position = court_node.attack_spots[i].position
-		get_other_team_players(team_with_ball)[i].position = court_node.defense_spots[i].position
+		
+		var team_player = get_team_players(team_with_ball)[i]
+		
+		team_player.position = court_node.attack_spots[i].position
+		team_player.velocity = Vector2.ZERO
+		
+		var other_team_player = get_other_team_players(team_with_ball)[i]
+		other_team_player.position = court_node.defense_spots[i].position
+		other_team_player.velocity = Vector2.ZERO
 
 func get_team_size():
 	

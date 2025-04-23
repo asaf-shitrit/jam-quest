@@ -21,6 +21,5 @@ shape = SubResource("CircleShape2D_u2ijx")
 [node name="TurnoverTimer" type="Timer" parent="."]
 wait_time = 3.0
 one_shot = true
-autostart = true
 
 [connection signal="timeout" from="TurnoverTimer" to="." method="_on_turnover_timer_timeout"]
