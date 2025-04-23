@@ -21,9 +21,10 @@ var stamina: int = 0
 var basketball_scene = preload("res://src/match/basketball/basketball.tscn")
 
 # Match variables
-var has_ball: bool = false
-var is_dribbling: bool = true
-var is_shooting: bool = false
+var is_shooting = false
+var has_ball = false
+var is_dribbling = false
+var is_driving = false
 var selected_defense_type: DefenseType = DefenseType.None
 
 func _ready() -> void:
@@ -43,6 +44,11 @@ func _process(_delta: float) -> void:
 	_update_menus_visibility()
 	velocity = Vector2.ZERO
 	
+func _physics_process(delta: float) -> void:
+	if not _in_match() and not is_on_floor():
+		velocity += get_gravity() * delta
+	
+	move_and_slide()
 	
 const MAX_STAMINA = 99.0
 const MIN_STAMINA = 1.0
@@ -86,7 +92,12 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func drive_to_basket():
-	pass
+	if not has_ball:
+		print("Player doesn't have the ball so he can't drive")
+		return
+	
+	is_driving = true
+	$DriveTimer.start()
 
 func pass_to_player(player: Player):
 	if not has_ball:
@@ -292,10 +303,6 @@ func get_action_result_chance(att: Player, def: Array[Player], action: PlayerAct
 	
 	return chance
 	
-	
-		
-		
-		
 		
 enum DefenseType {
 	Tight,
@@ -325,3 +332,7 @@ enum ActionResult {
 
 func _on_shoot_reset_timer_timeout():
 	is_shooting = false
+	
+func _on_drive_timer_timeout() -> void:
+	is_driving = false
+	has_ball = false
