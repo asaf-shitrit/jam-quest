@@ -41,7 +41,7 @@ func _get_time_to_target():
 		ShotType.Layup:
 			return 0.5
 		ShotType.Jumper:
-			return 0.85
+			return 0.75
 		ShotType.Lob:
 			return 0.5
 

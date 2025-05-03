@@ -17,6 +17,10 @@ var stamina: int = 0
 @export var game: BasketballMatch
 @export var hide_stamina := false
 
+enum FinishSide {
+	Left,
+	Right
+}
 
 var basketball_scene = preload("res://src/match/basketball/basketball.tscn")
 
@@ -25,6 +29,7 @@ var is_shooting = false
 var has_ball = false
 var is_dribbling = false
 var is_driving = false
+var finish_side = FinishSide.Left
 var selected_defense_type: DefenseType = DefenseType.None
 
 func _ready() -> void:
@@ -58,7 +63,11 @@ func _physics_process(_delta: float) -> void:
 			var stop_distance = 20.0  # How close to get before stopping
 			var max_drive_distance = 400.0
 
-			var to_target = basket_target - position
+			var side_adjustment = Vector2.ZERO
+			if finish_side == FinishSide.Right:
+				side_adjustment.x = 200
+
+			var to_target = basket_target - (position - side_adjustment)
 			print("distance to target %d" % to_target.x)
 			var distance = to_target.length()
 
@@ -130,6 +139,14 @@ func drive_to_basket():
 	collision_layer = 0
 	collision_mask = 0
 	z_index = 3
+
+
+	finish_side = FinishSide.Left
+
+	# 10% chance to drive to finish on the right side
+	if true or randi_range(0, 100) < 10:
+		finish_side = FinishSide.Right
+
 	is_driving = true
 	$DriveTimer.start()
 
@@ -163,10 +180,11 @@ func shoot():
 		print("not enough stamina")
 		return
 
-	
+
+
 
 	is_shooting = true
-	$ShootResetTimer.start()
+	$ShootResetTimer.start(1.5)
 	await get_tree().create_timer(0.6).timeout
 	
 	_shoot(PlayerAction.Shoot)
@@ -185,7 +203,15 @@ func _shoot(action: PlayerAction):
 	
 	var bball: Basketball = basketball_scene.instantiate()
 	bball.game = game
-	bball.origin = position + Vector2()
+
+	bball.z_index = 2
+
+	if action == PlayerAction.Shoot:
+		bball.position = position + Vector2(0, -40)
+	elif action == PlayerAction.Drive:
+		bball.position = position + Vector2(0, -45)
+
+	bball.origin = bball.global_position
 	bball.target_basket = basket
 	bball.creator = self
 	if action == PlayerAction.Shoot:
@@ -195,9 +221,10 @@ func _shoot(action: PlayerAction):
 
 	bball.collision_layer = 0
 	bball.collision_mask = 0
+	bball.gravity_scale = 0.0
 
-	has_ball = false
-	is_dribbling = false
+
+
 	stamina-=1
 	$StaminaTimer.start()
 
@@ -214,6 +241,9 @@ func _shoot(action: PlayerAction):
 	
 	print("action chance: %d, rolled_chance: %d" % [action_chance, actual_chance])
 	
+
+
+
 	if actual_chance > action_chance:
 		print('missed the shot')
 		var delta = absf(actual_chance - action_chance)
@@ -224,9 +254,17 @@ func _shoot(action: PlayerAction):
 	else:
 		print("made the shot")
 
+	var is_miss = bball.miss_type != Basketball.MissType.None
+
 	
 	game.add_child(bball)
 
+	await get_tree().create_timer(0.5).timeout
+
+	if is_miss:
+		bball.z_index = 2
+	else:
+		bball.z_index = 0
 
 
 
@@ -384,6 +422,8 @@ enum ActionResult {
 
 func _on_shoot_reset_timer_timeout():
 	is_shooting = false
+	has_ball = false
+	is_dribbling = false
 	
 func _on_drive_timer_timeout() -> void:
 	is_driving = false

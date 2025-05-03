@@ -1,9 +1,10 @@
-[gd_scene load_steps=90 format=3 uid="uid://p615165ww115"]
+[gd_scene load_steps=34 format=3 uid="uid://p615165ww115"]
 
 [ext_resource type="Script" uid="uid://d3mkcw64h0vty" path="res://src/characters/player/player.gd" id="1_mtcsl"]
 [ext_resource type="Resource" uid="uid://budfyq22k6y26" path="res://src/resources/players/bronny.tres" id="2_qf5tv"]
 [ext_resource type="Script" uid="uid://lv1qjgjxbmnm" path="res://src/characters/player/stamina_bar.gd" id="3_5c1al"]
 [ext_resource type="PackedScene" uid="uid://2cucgduq8ri5" path="res://src/match/menus/ball_handler_actions.tscn" id="4_03ylq"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://ci7uf8dnxy1wj" path="res://src/characters/player/player_state_machine.tres" id="4_6m51j"]
 [ext_resource type="Script" uid="uid://4pyk43idwcaj" path="res://src/characters/player/animation_tree.gd" id="4_50u7j"]
 [ext_resource type="Texture2D" uid="uid://ba5ewpkgjn8am" path="res://assets/pixel-hoops/Character2.png" id="4_hhaut"]
 [ext_resource type="PackedScene" uid="uid://chswql01u75s4" path="res://src/match/menus/offball_actions.tscn" id="5_hhnms"]
@@ -305,7 +306,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_hhaut"]
 resource_name = "shoot"
-length = 0.7
+length = 1.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -342,272 +343,16 @@ _data = {
 &"shoot": SubResource("Animation_hhaut")
 }
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qf5tv"]
-animation = &"idle"
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_020ow"]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hhaut"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_50u7j"]
-advance_mode = 2
-advance_condition = &"in_match"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_6m51j"]
-states/idle/node = SubResource("AnimationNodeAnimation_qf5tv")
-states/idle/position = Vector2(518, 94.6667)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_hhaut"), "idle", "End", SubResource("AnimationNodeStateMachineTransition_50u7j")]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hhaut"]
-animation = &"defense"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6m51j"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2q7jk"]
-advance_mode = 2
-advance_expression = "not on_defense"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_020ow"]
-states/End/position = Vector2(682, 98.6667)
-states/defense/node = SubResource("AnimationNodeAnimation_hhaut")
-states/defense/position = Vector2(425.333, 98.642)
-transitions = ["Start", "defense", SubResource("AnimationNodeStateMachineTransition_6m51j"), "defense", "End", SubResource("AnimationNodeStateMachineTransition_2q7jk")]
-graph_offset = Vector2(-244, -140)
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_grn1g"]
-animation = &"offball"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2q7jk"]
-animation = &"offball_2"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7swvd"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rc7uv"]
-switch_mode = 2
-advance_mode = 2
-advance_expression = "has_ball == true or on_defense"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_itgpm"]
-states/offball/node = SubResource("AnimationNodeAnimation_grn1g")
-states/offball/position = Vector2(507, 80.3333)
-states/offball_2/node = SubResource("AnimationNodeAnimation_2q7jk")
-states/offball_2/position = Vector2(452.667, 206.667)
-transitions = ["Start", "offball", SubResource("AnimationNodeStateMachineTransition_7swvd"), "offball", "End", SubResource("AnimationNodeStateMachineTransition_rc7uv")]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_q6sbs"]
-animation = &"idle_dribble"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8knvk"]
-animation = &"idle_dribble_cross"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_j2msd"]
-advance_mode = 2
-advance_expression = "is_dribbling == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_itgpm"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_o2nns"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7020a"]
-advance_mode = 2
-advance_expression = "change_idle_dribble == true"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_co8yl"]
-states/Start/position = Vector2(36.333, 160.963)
-states/idle_dribble/node = SubResource("AnimationNodeAnimation_q6sbs")
-states/idle_dribble/position = Vector2(336.667, 100)
-states/idle_dribble_cross/node = SubResource("AnimationNodeAnimation_8knvk")
-states/idle_dribble_cross/position = Vector2(355.333, 332)
-transitions = ["idle_dribble", "End", SubResource("AnimationNodeStateMachineTransition_j2msd"), "Start", "idle_dribble", SubResource("AnimationNodeStateMachineTransition_itgpm"), "idle_dribble_cross", "idle_dribble", SubResource("AnimationNodeStateMachineTransition_o2nns"), "idle_dribble", "idle_dribble_cross", SubResource("AnimationNodeStateMachineTransition_7020a")]
-graph_offset = Vector2(-253, -50)
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wq4by"]
-animation = &"jab"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6m51j"]
-animation = &"dunk"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_020ow"]
-animation = &"layup"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_50u7j"]
-animation = &"shoot"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_p4xxa"]
-advance_mode = 2
-advance_expression = "is_dribbling == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gt173"]
-advance_mode = 2
-advance_expression = "is_dribbling == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2irhy"]
-advance_mode = 2
-advance_expression = "is_dribbling == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8knvk"]
-advance_mode = 2
-advance_expression = "is_dribbling == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_10gxj"]
-advance_mode = 2
-advance_expression = "has_ball == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_irc3h"]
-advance_mode = 2
-advance_expression = "is_shooting == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kkwog"]
-advance_mode = 2
-advance_expression = "is_shooting == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sks4s"]
-advance_mode = 2
-advance_expression = "has_ball == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gu7uu"]
-switch_mode = 2
-advance_mode = 2
-advance_expression = "is_shooting == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_cvfrj"]
-advance_mode = 2
-advance_expression = "is_driving == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_adjyn"]
-advance_mode = 2
-advance_expression = "is_dunking == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_co8yl"]
-switch_mode = 2
-advance_mode = 2
-advance_expression = "is_dunking == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wq4by"]
-switch_mode = 2
-advance_mode = 2
-advance_expression = "is_driving == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_miqvf"]
-advance_mode = 2
-advance_expression = "is_dunking == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2oyr7"]
-advance_mode = 2
-advance_expression = "is_driving == true"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_10gxj"]
-states/Dribble/node = SubResource("AnimationNodeStateMachine_co8yl")
-states/Dribble/position = Vector2(389.167, -86.8333)
-states/End/position = Vector2(1000, 38.6667)
-states/Jab/node = SubResource("AnimationNodeAnimation_wq4by")
-states/Jab/position = Vector2(362.667, 355.333)
-states/dunk/node = SubResource("AnimationNodeAnimation_6m51j")
-states/dunk/position = Vector2(648.115, 118.904)
-states/layup/node = SubResource("AnimationNodeAnimation_020ow")
-states/layup/position = Vector2(768.115, 303.57)
-states/shoot/node = SubResource("AnimationNodeAnimation_50u7j")
-states/shoot/position = Vector2(721.615, -125.16)
-transitions = ["Jab", "Dribble", SubResource("AnimationNodeStateMachineTransition_p4xxa"), "Start", "Dribble", SubResource("AnimationNodeStateMachineTransition_gt173"), "Start", "Jab", SubResource("AnimationNodeStateMachineTransition_2irhy"), "Dribble", "Jab", SubResource("AnimationNodeStateMachineTransition_8knvk"), "Jab", "End", SubResource("AnimationNodeStateMachineTransition_10gxj"), "Dribble", "shoot", SubResource("AnimationNodeStateMachineTransition_irc3h"), "Jab", "shoot", SubResource("AnimationNodeStateMachineTransition_kkwog"), "Dribble", "End", SubResource("AnimationNodeStateMachineTransition_sks4s"), "shoot", "End", SubResource("AnimationNodeStateMachineTransition_gu7uu"), "Jab", "layup", SubResource("AnimationNodeStateMachineTransition_cvfrj"), "Jab", "dunk", SubResource("AnimationNodeStateMachineTransition_adjyn"), "dunk", "End", SubResource("AnimationNodeStateMachineTransition_co8yl"), "layup", "End", SubResource("AnimationNodeStateMachineTransition_wq4by"), "Dribble", "dunk", SubResource("AnimationNodeStateMachineTransition_miqvf"), "Dribble", "layup", SubResource("AnimationNodeStateMachineTransition_2oyr7")]
-graph_offset = Vector2(-86.885, -79.763)
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6i1ol"]
-advance_mode = 2
-advance_expression = "has_ball == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_duji1"]
-advance_mode = 2
-advance_expression = "has_ball == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_020ow"]
-advance_mode = 2
-advance_expression = "on_offense == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_grn1g"]
-advance_mode = 2
-advance_expression = "on_offense == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5h721"]
-advance_mode = 2
-advance_expression = "has_ball == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4dxc1"]
-advance_mode = 2
-advance_expression = "has_ball == false"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_7020a"]
-states/End/position = Vector2(750, 100.889)
-states/Offball/node = SubResource("AnimationNodeStateMachine_itgpm")
-states/Offball/position = Vector2(467.333, 59.3333)
-states/Onball/node = SubResource("AnimationNodeStateMachine_10gxj")
-states/Onball/position = Vector2(466.667, 183.333)
-transitions = ["Onball", "Offball", SubResource("AnimationNodeStateMachineTransition_6i1ol"), "Offball", "Onball", SubResource("AnimationNodeStateMachineTransition_duji1"), "Offball", "End", SubResource("AnimationNodeStateMachineTransition_020ow"), "Onball", "End", SubResource("AnimationNodeStateMachineTransition_grn1g"), "Start", "Offball", SubResource("AnimationNodeStateMachineTransition_5h721"), "Start", "Onball", SubResource("AnimationNodeStateMachineTransition_4dxc1")]
-graph_offset = Vector2(-231.86, -150.225)
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_otj2h"]
-advance_mode = 2
-advance_expression = "on_defense == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gplkj"]
-advance_mode = 2
-advance_expression = "on_defense == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1k6q5"]
-advance_mode = 2
-advance_expression = "on_defense == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5tftc"]
-advance_mode = 2
-advance_expression = "on_defense == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i4ppf"]
-switch_mode = 2
-advance_mode = 2
-advance_expression = "in_match == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ej0fg"]
-switch_mode = 2
-advance_mode = 2
-advance_expression = "in_match == false"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qf5tv"]
-advance_mode = 2
-advance_expression = "in_match == false"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_o2nns"]
-states/Defense/node = SubResource("AnimationNodeStateMachine_020ow")
-states/Defense/position = Vector2(494.955, 328)
-states/Offense/node = SubResource("AnimationNodeStateMachine_7020a")
-states/Offense/position = Vector2(518.455, 27)
-states/Start/position = Vector2(207.333, 120)
-transitions = ["Start", "Offense", SubResource("AnimationNodeStateMachineTransition_otj2h"), "Start", "Defense", SubResource("AnimationNodeStateMachineTransition_gplkj"), "Defense", "Offense", SubResource("AnimationNodeStateMachineTransition_1k6q5"), "Offense", "Defense", SubResource("AnimationNodeStateMachineTransition_5tftc"), "Offense", "End", SubResource("AnimationNodeStateMachineTransition_i4ppf"), "Defense", "End", SubResource("AnimationNodeStateMachineTransition_ej0fg"), "Start", "End", SubResource("AnimationNodeStateMachineTransition_qf5tv")]
-graph_offset = Vector2(5.13999, -94.525)
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wn5t5"]
-advance_mode = 2
-advance_expression = "in_match == true"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3w76t"]
-advance_mode = 2
-advance_expression = "not in_match"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_q6sbs"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_50u7j"]
-states/End/position = Vector2(731.333, 190.313)
-states/Explore/node = SubResource("AnimationNodeStateMachine_6m51j")
-states/Explore/position = Vector2(1021.87, 35.6667)
-states/Match/node = SubResource("AnimationNodeStateMachine_o2nns")
-states/Match/position = Vector2(1048.52, 175.333)
-states/Start/position = Vector2(688.444, 46.6191)
-transitions = ["Explore", "Match", SubResource("AnimationNodeStateMachineTransition_wn5t5"), "Match", "Explore", SubResource("AnimationNodeStateMachineTransition_3w76t"), "Start", "Explore", SubResource("AnimationNodeStateMachineTransition_q6sbs")]
-graph_offset = Vector2(479.195, -119.42)
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_grn1g"]
+graph_offset = Vector2(-265.43, -80.4668)
+nodes/AnimationNodeStateMachine/node = ExtResource("4_6m51j")
+nodes/AnimationNodeStateMachine/position = Vector2(0, 80)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_020ow")
+nodes/TimeScale/position = Vector2(346.667, 266.667)
+nodes/output/position = Vector2(626.667, 93.3333)
+node_connections = [&"TimeScale", 0, &"AnimationNodeStateMachine", &"output", 0, &"TimeScale"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mtcsl"]
 height = 46.0
@@ -641,9 +386,10 @@ autoplay = "idle"
 
 [node name="AnimationTree" type="AnimationTree" parent="." node_paths=PackedStringArray("player")]
 deterministic = false
-tree_root = SubResource("AnimationNodeStateMachine_50u7j")
+tree_root = SubResource("AnimationNodeBlendTree_grn1g")
 anim_player = NodePath("../AnimationPlayer")
-parameters/Explore/conditions/in_match = false
+parameters/AnimationNodeStateMachine/Explore/conditions/in_match = false
+parameters/TimeScale/scale = 1.0
 script = ExtResource("4_50u7j")
 player = NodePath("..")
 change_idle_dribble = false
@@ -695,6 +441,7 @@ offset_bottom = 4.0
 player = NodePath("../..")
 
 [node name="ShootResetTimer" type="Timer" parent="."]
+wait_time = 1.5
 one_shot = true
 
 [node name="DriveTimer" type="Timer" parent="."]

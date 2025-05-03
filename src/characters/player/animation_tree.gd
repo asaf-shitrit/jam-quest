@@ -14,6 +14,7 @@ extends AnimationTree
 @export var change_idle_dribble = true
 var ready_time = 0
 
+@export var shot_speed := 0.5
 
 func _ready() -> void:
 	start_timer()
