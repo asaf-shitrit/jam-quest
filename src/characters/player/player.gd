@@ -59,13 +59,13 @@ func _physics_process(_delta: float) -> void:
 	if is_driving:
 		var active_basket = game.get_active_basket()
 		if active_basket != null:
-			var basket_target = active_basket.position + Vector2(0, 100)
+			var basket_target = active_basket.position + Vector2(0, 80)
 			var stop_distance = 20.0  # How close to get before stopping
-			var max_drive_distance = 400.0
+			var max_drive_distance = 600.0
 
 			var side_adjustment = Vector2.ZERO
-			if finish_side == FinishSide.Right:
-				side_adjustment.x = 200
+			# if finish_side == FinishSide.Right:
+			# 	side_adjustment.x = 200
 
 			var to_target = basket_target - (position - side_adjustment)
 			print("distance to target %d" % to_target.x)
@@ -74,11 +74,11 @@ func _physics_process(_delta: float) -> void:
 			if distance <= stop_distance:
 				# ✅ ARRIVED: stop moving and end drive
 				arrived_at_basket = true
-				velocity.x = lerp(velocity.x, 0, 0.3)
+				velocity.x = lerp(velocity.x, 0.0, 0.3)
 				
 				# ✨ Add a jump when reaching the basket
 				if not has_jumped_at_basket:
-					velocity.y += -500  # Adjust value based on gravity/jump strength
+					velocity.y += -300  # Adjust value based on gravity/jump strength
 					has_jumped_at_basket = true
 
 			else:
@@ -150,6 +150,16 @@ func drive_to_basket():
 	is_driving = true
 	$DriveTimer.start()
 
+	await get_tree().create_timer(1.2).timeout
+
+	collision_layer = 0
+	collision_mask = 0
+	z_index = 1
+
+	velocity.x = 0
+	
+	_shoot(PlayerAction.Drive)
+
 func pass_to_player(player: Player):
 	if not has_ball:
 		print("Player doesn't have the ball so he can't pass it")
@@ -209,7 +219,7 @@ func _shoot(action: PlayerAction):
 	if action == PlayerAction.Shoot:
 		bball.position = position + Vector2(0, -40)
 	elif action == PlayerAction.Drive:
-		bball.position = position + Vector2(0, -45)
+		bball.position = position + Vector2(20, -40)
 
 	bball.origin = bball.global_position
 	bball.target_basket = basket
@@ -223,8 +233,6 @@ func _shoot(action: PlayerAction):
 	bball.collision_mask = 0
 	bball.gravity_scale = 0.0
 
-
-
 	stamina-=1
 	$StaminaTimer.start()
 
@@ -232,8 +240,8 @@ func _shoot(action: PlayerAction):
 	print("Player velocity after shooting: %s" % velocity)
 	
 	# Reset player's velocity to prevent unintended movement
-	velocity = Vector2.ZERO
-	
+	velocity.y = 0
+
 	# result
 	var defending_players = game.get_closest_defending_players(self)
 	var action_chance = get_action_result_chance(self, defending_players, action)
@@ -427,11 +435,6 @@ func _on_shoot_reset_timer_timeout():
 	
 func _on_drive_timer_timeout() -> void:
 	is_driving = false
+	has_ball = false
+	is_dribbling = false
 	
-	collision_layer = 1
-	collision_mask = 1
-	z_index = 1
-
-	velocity.x = 0
-	
-	_shoot(PlayerAction.Drive)

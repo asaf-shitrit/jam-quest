@@ -376,6 +376,7 @@ position = Vector2(0, -24)
 texture = ExtResource("4_hhaut")
 hframes = 29
 vframes = 22
+frame = 377
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 deterministic = true
@@ -445,7 +446,7 @@ wait_time = 1.5
 one_shot = true
 
 [node name="DriveTimer" type="Timer" parent="."]
-wait_time = 1.22
+wait_time = 2.0
 one_shot = true
 
 [connection signal="animation_changed" from="AnimationPlayer" to="." method="_on_animation_player_animation_changed"]

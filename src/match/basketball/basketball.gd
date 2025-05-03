@@ -82,6 +82,10 @@ func _ready() -> void:
 		$TurnoverTimer.start(2)
 	else:
 		$TurnoverTimer.start(1.5)
+
+	# set up the ball to be a projectile
+	# we want to be able to move the ball around, but not have it fall
+	freeze = true
 		
 
 func _process(delta: float) -> void:
