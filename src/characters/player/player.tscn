@@ -631,7 +631,6 @@ position = Vector2(0, -24)
 texture = ExtResource("4_hhaut")
 hframes = 29
 vframes = 22
-frame = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 deterministic = true
@@ -667,8 +666,8 @@ offset_top = 5.0
 offset_right = 18.0
 offset_bottom = 20.0
 script = ExtResource("3_5c1al")
-basketball_texture = ExtResource("6_50u7j")
 player = NodePath("..")
+basketball_texture = ExtResource("6_50u7j")
 metadata/_custom_type_script = "uid://lv1qjgjxbmnm"
 
 [node name="Menus" type="Control" parent="."]
@@ -699,9 +698,10 @@ player = NodePath("../..")
 one_shot = true
 
 [node name="DriveTimer" type="Timer" parent="."]
-wait_time = 1.8
+wait_time = 1.22
 one_shot = true
 
+[connection signal="animation_changed" from="AnimationPlayer" to="." method="_on_animation_player_animation_changed"]
 [connection signal="timeout" from="AnimationTree/IdleDribbleVarientTimer" to="AnimationTree" method="_on_dribble_varient_timer_timeout"]
 [connection signal="timeout" from="StaminaTimer" to="." method="_on_stamina_timer_timeout"]
 [connection signal="timeout" from="ShootResetTimer" to="." method="_on_shoot_reset_timer_timeout"]

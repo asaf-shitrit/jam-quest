@@ -50,10 +50,7 @@ var arrived_at_basket = false
 var has_jumped_at_basket = false  # Make sure to reset this when needed
 
 
-func _physics_process(delta: float) -> void:
-	if not _in_match() and not is_on_floor():
-		velocity += get_gravity() * delta
-
+func _physics_process(_delta: float) -> void:
 	if is_driving:
 		var active_basket = game.get_active_basket()
 		if active_basket != null:
@@ -74,6 +71,7 @@ func _physics_process(delta: float) -> void:
 				if not has_jumped_at_basket:
 					velocity.y += -500  # Adjust value based on gravity/jump strength
 					has_jumped_at_basket = true
+
 			else:
 				# 🏃 Driving toward basket with curved acceleration
 				arrived_at_basket = false
@@ -107,7 +105,7 @@ func _get_max_stamina():
 	
 
 func _setup_stamina_bar():
-	print("max stamina %d" % _get_max_stamina())
+	#print("max stamina %d" % _get_max_stamina())
 	$StaminaTimer.one_shot = false
 	$StaminaTimer.wait_time = _get_stamina_wait_time()
 
@@ -174,6 +172,7 @@ func shoot():
 	_shoot(PlayerAction.Shoot)
 
 
+
 # raw version of shoot used for both layups and jumpers
 func _shoot(action: PlayerAction):
 	
@@ -186,7 +185,7 @@ func _shoot(action: PlayerAction):
 	
 	var bball: Basketball = basketball_scene.instantiate()
 	bball.game = game
-	bball.origin = position + Vector2(-1,-20)
+	bball.origin = position + Vector2()
 	bball.target_basket = basket
 	bball.creator = self
 	if action == PlayerAction.Shoot:
@@ -194,10 +193,19 @@ func _shoot(action: PlayerAction):
 	elif action == PlayerAction.Drive:
 		bball.shot_type = Basketball.ShotType.Layup
 
+	bball.collision_layer = 0
+	bball.collision_mask = 0
+
 	has_ball = false
 	is_dribbling = false
 	stamina-=1
 	$StaminaTimer.start()
+
+	# Debug player's velocity
+	print("Player velocity after shooting: %s" % velocity)
+	
+	# Reset player's velocity to prevent unintended movement
+	velocity = Vector2.ZERO
 	
 	# result
 	var defending_players = game.get_closest_defending_players(self)
@@ -218,6 +226,9 @@ func _shoot(action: PlayerAction):
 
 	
 	game.add_child(bball)
+
+
+
 
 func _defense_type():
 	return 	DefenseType.Tight
@@ -250,21 +261,15 @@ func _on_stamina_timer_timeout() -> void:
 	# replenish stamina
 	stamina += 1
 	var max_stamina = _get_max_stamina()
-	stamina = clampf(stamina, 0, max_stamina)
-	print("stamina %d" % stamina)
-	print("max stamina %d" % max_stamina)
+	stamina = clamp(stamina, 0, max_stamina)
+	#print("stamina %d" % stamina)
+	#print("max stamina %d" % max_stamina)
 
 
 
 
 const BASE_CHANCE = 40.0 # the chance to hit a general shoot in percent
 const BASE_ATT_BONUS = 10.0 # this gives a natural bonus to the attacking side
-
-
-
-func sum(accum, number):
-	return accum + number
-
 
 func get_stats_mistatch_on_action(att: Player, def: Array[Player], action: PlayerAction) -> Mismatch:
 	
@@ -386,5 +391,7 @@ func _on_drive_timer_timeout() -> void:
 	collision_layer = 1
 	collision_mask = 1
 	z_index = 1
+
+	velocity.x = 0
 	
 	_shoot(PlayerAction.Drive)

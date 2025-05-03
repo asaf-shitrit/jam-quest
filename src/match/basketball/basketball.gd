@@ -79,12 +79,19 @@ func _ready() -> void:
 	global_position = origin
 	
 	if miss_type == MissType.None:
-		$TurnoverTimer.start(3)
+		$TurnoverTimer.start(2)
 	else:
-		$TurnoverTimer.start(3)
+		$TurnoverTimer.start(1.5)
 		
 
 func _process(delta: float) -> void:
+
+	print("position: %s" % position)
+
+	if position.y > 0:
+		visible = false
+	else:
+		visible = true
 
 	if did_bounce:
 		move_after_bounce(delta)
@@ -143,6 +150,7 @@ func _on_body_entered(body: Node) -> void:
 		
 
 func _on_turnover_timer_timeout() -> void:
+	print("Basketball: turnover timer expired")
 	if not creator:
 		push_error("Basketball: no creator assigned for turnover")
 		return
