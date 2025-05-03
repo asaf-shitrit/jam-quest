@@ -17,7 +17,7 @@ enum MatchCourtSize {
 
 @export var court_scene: PackedScene
 var court_node: Court
-var camera: Camera2D
+@export var camera: GameCamera
 
 @export var scoreLimit := 21
 @export var teamLimit := 1
@@ -41,11 +41,12 @@ var momentum: float = 0.0
 
 func _ready() -> void:
 	setup_court()
-	setup_camera()
 	setup_players()
 	setup_game_indicators()
+
 	start_match()
-	update_players_positions()
+
+
 	
 	
 func update_players_positions():	
@@ -98,11 +99,6 @@ func setup_players():
 func setup_court():
 	court_node = court_scene.instantiate()
 	add_child(court_node)
-	
-func setup_camera():
-	camera = Camera2D.new()
-	camera.zoom = Vector2(3.5, 3.5)
-	court_node.add_child(camera)
 
 func score_points(team: Globals.Team, points: int) -> void:
 	# Check if the match has started
@@ -205,6 +201,9 @@ func start_match() -> void:
 	teamB_Score = 0
 	
 	is_started = true
+
+	update_players_positions()
+	camera._focus_on_game_area()
 
 	print("Match started!")
 	emit_signal("match_started")
