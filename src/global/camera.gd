@@ -35,3 +35,10 @@ func _focus_on_game_area():
 	
 	target_zoom = Vector2(4.5, 4.5)
 	target_position = position + Vector2(25, -40)
+
+func _shake(strength: float, duration: float) -> void:
+	# Shake the camera by modifying its position
+	var shake_offset = Vector2(randf_range(-strength, strength), randf_range(-strength, strength))
+	position += shake_offset
+	await get_tree().create_timer(duration).timeout
+	position -= shake_offset

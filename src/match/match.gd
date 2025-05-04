@@ -99,7 +99,12 @@ func setup_players():
 	
 func setup_court():
 	court_node = court_scene.instantiate()
+	court_node.basket_made.connect(_on_basket_made)
 	add_child(court_node)
+	
+func _on_basket_made(ball: Basketball):
+	var points = 2
+	score_points(ball.creator.team, points)
 
 func score_points(team: Globals.Team, points: int) -> void:
 	# Check if the match has started

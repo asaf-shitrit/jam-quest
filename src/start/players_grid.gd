@@ -84,23 +84,21 @@ func _on_player_pressed(player: PlayerData):
 			
 		return
 	
-	if _selecting_team() == Globals.Team.A:
+	var team = _selecting_team()
+	if team == Globals.Team.A:
 		teamA.push_back(player)
 	else:
 		teamB.push_back(player)
 	
-
-
-	var team_name = "teamA"
-	if _selecting_team() == Globals.Team.B:
-		team_name = "teamB"
-
-	print("team %s selected %s" % [team_name, player.name])
+	print("team %s selected %s" % [Utility.get_team_name(team), player.name])
 		
 
 
 
 func _on_back_pressed() -> void:
+	
+	_reset()
+	
 	emit_signal("back_pressed")
 
 

@@ -85,12 +85,12 @@ func _ready() -> void:
 
 	# set up the ball to be a projectile
 	# we want to be able to move the ball around, but not have it fall
-	freeze = true
+	#freeze = true
 		
 
 func _process(delta: float) -> void:
 
-	print("position: %s" % position)
+	#print("position: %s" % position)
 
 	if position.y > 0:
 		visible = false
@@ -151,7 +151,8 @@ func _on_body_entered(body: Node) -> void:
 		var points := _get_shot_value(origin.distance_to(target_basket.position))
 		game.score_points(body.team, points)
 
-		
+func did_miss():
+	return miss_type != MissType.None
 
 func _on_turnover_timer_timeout() -> void:
 	print("Basketball: turnover timer expired")

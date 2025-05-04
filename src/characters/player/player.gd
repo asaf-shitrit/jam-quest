@@ -229,7 +229,7 @@ func _shoot(action: PlayerAction):
 	elif action == PlayerAction.Drive:
 		bball.shot_type = Basketball.ShotType.Layup
 
-	bball.collision_layer = 0
+	bball.collision_layer = 2
 	bball.collision_mask = 0
 	bball.gravity_scale = 0.0
 
@@ -249,9 +249,6 @@ func _shoot(action: PlayerAction):
 	
 	print("action chance: %d, rolled_chance: %d" % [action_chance, actual_chance])
 	
-
-
-
 	if actual_chance > action_chance:
 		print('missed the shot')
 		var delta = absf(actual_chance - action_chance)
@@ -263,7 +260,6 @@ func _shoot(action: PlayerAction):
 		print("made the shot")
 
 	var is_miss = bball.miss_type != Basketball.MissType.None
-
 	
 	game.add_child(bball)
 

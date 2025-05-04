@@ -7,9 +7,14 @@
 radius = 6.0
 
 [node name="Basketball" type="RigidBody2D"]
+collision_layer = 2
+collision_mask = 2
 script = ExtResource("1_u2ijx")
+origin = null
+miss_type = null
+shot_type = null
 
-[node name="Body" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(-1, -1)
 scale = Vector2(1.5, 1.5)
 texture = ExtResource("2_kclxf")
