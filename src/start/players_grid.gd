@@ -7,7 +7,7 @@ class_name PlayersGrid
 
 var player_avatar_scene = preload("res://src/start/player-avatar.tscn")
 
-signal selection_finished(teamA: Array[PlayerData], teamB: Array[PlayerData])
+signal selection_finished(teamA: TeamData, teamB: TeamData)
 
 var teamA: Array[PlayerData] = []
 var teamB: Array[PlayerData] = []
@@ -101,5 +101,14 @@ func _on_player_pressed(player: PlayerData):
 func _on_button_pressed() -> void:
 	if not _done_selecting():
 		print("cant finish yet")
+		
+		
+	var teamA_Data = TeamData.new()
+	teamA_Data.name = "Team A"
+	teamA_Data.players = teamA
 	
-	emit_signal("selection_finished", teamA, teamB)
+	var teamB_Data = TeamData.new()
+	teamB_Data.name = "Team B"
+	teamB_Data.players = teamB
+	
+	emit_signal("selection_finished", teamA_Data, teamB_Data)

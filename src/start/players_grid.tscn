@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c52ufobqk72i"]
 
-[ext_resource type="Script" uid="uid://d5arfbyh2a0j" path="res://src/players_grid.gd" id="1_vgg18"]
+[ext_resource type="Script" uid="uid://d5arfbyh2a0j" path="res://src/start/players_grid.gd" id="1_vgg18"]
 [ext_resource type="Script" uid="uid://b7ve1kaquoxeo" path="res://src/resources/player_data.gd" id="2_5agp4"]
 [ext_resource type="Resource" uid="uid://d1rs1d3f7aw3v" path="res://src/resources/players/austin.tres" id="3_eoye5"]
 [ext_resource type="Resource" uid="uid://budfyq22k6y26" path="res://src/resources/players/bronny.tres" id="4_bipod"]

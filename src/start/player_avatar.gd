@@ -18,7 +18,7 @@ func _process(delta: float) -> void:
 		$TeamLabel.text = ""
 	else:
 		modulate.a = 1.0
-		$TeamLabel.text = "Team %s" % team
+		$TeamLabel.text = "Team %s" % Utility.get_team_name(team)
 		
 
 func _on_pressed() -> void:

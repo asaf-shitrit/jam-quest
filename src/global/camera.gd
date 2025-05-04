@@ -33,5 +33,5 @@ func _focus_on_game_area():
 	center_pos /= players.size()
 	position = center_pos
 	
-	target_zoom = Vector2(6,6)
-	target_position = position + Vector2(0, -50)
+	target_zoom = Vector2(4.5, 4.5)
+	target_position = position + Vector2(25, -40)

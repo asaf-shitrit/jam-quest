@@ -4,6 +4,7 @@ class_name BasketballMatch
 
 signal match_ended(winning_team, score)
 signal match_started
+signal match_exit
 signal score(team, points)
 signal match_paused
 signal match_resumed
@@ -20,7 +21,6 @@ var court_node: Court
 @export var camera: GameCamera
 
 @export var scoreLimit := 21
-@export var teamLimit := 1
 var teamA_Score := 0
 var teamB_Score := 0
 
@@ -36,18 +36,19 @@ var is_paused: bool = false
 var momentum: float = 0.0
 
 @export var player_scene: PackedScene
-
 @export var disable_turnovers = false
 
 func _ready() -> void:
 	setup_court()
 	setup_players()
 	setup_game_indicators()
-
 	start_match()
 
 
+func _process(delta: float) -> void:
 	
+	if Input.is_action_just_released("ui_open_menu"):
+		$GameCamera/GamePauseMenu.visible = !$GameCamera/GamePauseMenu.visible
 	
 func update_players_positions():	
 	
@@ -172,6 +173,8 @@ func _check_if_match_needs_to_end():
 
 func setup_game_indicators():
 	
+
+	
 	var team_label := CurrentTeamLabel.new()
 	team_label.game = self
 	team_label.position.y = 60
@@ -183,6 +186,11 @@ func setup_game_indicators():
 	score_panel.position.y = -90
 	score_panel.position.x = 20
 	add_child(score_panel)
+	
+	
+	$GameCamera/GamePauseMenu.visible = false
+
+	
 
 func start_match() -> void:
 	if is_started:
@@ -328,3 +336,10 @@ func turnover(by: Player):
 	emit_signal("possession_change")
 	
 	update_players_positions()
+
+
+func _on_leave_match_button_pressed() -> void:
+	emit_signal("match_exit")
+
+func _on_quit_game_button_pressed() -> void:
+	get_tree().quit()
