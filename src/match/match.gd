@@ -103,8 +103,9 @@ func setup_court():
 	add_child(court_node)
 	
 func _on_basket_made(ball: Basketball):
-	var points = 2
-	score_points(ball.creator.team, points)
+	score_points(ball.creator.team, ball._get_shot_value())
+	camera._shake(1.0, 0.1)
+
 
 func score_points(team: Globals.Team, points: int) -> void:
 	# Check if the match has started

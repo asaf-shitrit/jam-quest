@@ -37,8 +37,19 @@ func _focus_on_game_area():
 	target_position = position + Vector2(25, -40)
 
 func _shake(strength: float, duration: float) -> void:
-	# Shake the camera by modifying its position
-	var shake_offset = Vector2(randf_range(-strength, strength), randf_range(-strength, strength))
-	position += shake_offset
-	await get_tree().create_timer(duration).timeout
-	position -= shake_offset
+	# Store the original position of the camera
+	var original_position = position
+	
+	# Calculate the end time for the shake
+	var end_time = Time.get_ticks_msec() + int(duration * 1000)
+	
+	while Time.get_ticks_msec() < end_time:
+		# Apply a random offset to the camera's position
+		var shake_offset = Vector2(randf_range(-strength, strength), randf_range(-strength, strength))
+		position = original_position + shake_offset
+		
+		# Wait for the next frame
+		await get_tree().process_frame
+	
+	# Reset the camera's position to the original
+	position = original_position

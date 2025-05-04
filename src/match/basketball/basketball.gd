@@ -68,8 +68,6 @@ func calculate_projectile_velocity(start: Vector2, target: Vector2, time: float)
 	return Vector2(vx, vy)
 
 func _ready() -> void:
-	# set up collision callback
-	connect("body_entered", _on_body_entered)
 	# figure out our launch velocity so we land in the hoop in exactly time_to_target
 	
 	var actual_target = get_modified_target_position()
@@ -139,17 +137,11 @@ func move_down(delta: float) -> void:
 	
 
 
-func _get_shot_value(distance: float) -> int:
-	
-	if distance > THREE_POINT_SHOT_DISTANCE:
+func _get_shot_value():
+	if origin.distance_to(target_basket.position) > THREE_POINT_SHOT_DISTANCE:
 		return 3
 	return 2
 	
-
-func _on_body_entered(body: Node) -> void:
-	if body is Basket:
-		var points := _get_shot_value(origin.distance_to(target_basket.position))
-		game.score_points(body.team, points)
 
 func did_miss():
 	return miss_type != MissType.None
