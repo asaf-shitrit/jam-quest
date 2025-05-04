@@ -2,5 +2,6 @@ extends Node
 
 enum Team {
 	A,
-	B
+	B,
+	None
 }

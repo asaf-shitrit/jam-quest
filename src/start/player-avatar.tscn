@@ -1,0 +1,67 @@
+[gd_scene load_steps=6 format=3 uid="uid://dodrfqt42odv1"]
+
+[ext_resource type="Script" uid="uid://g1ds77ts7n4u" path="res://src/start/player_avatar.gd" id="1_d5bfc"]
+[ext_resource type="Texture2D" uid="uid://qdwsyrresio6" path="res://assets/kenney_ui-pack/PNG/Grey/Default/button_square_flat.png" id="2_flhyq"]
+[ext_resource type="Texture2D" uid="uid://do15svf6lumdo" path="res://assets/pixel-hoops/Ball.png" id="2_ly35o"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_3f2ek"]
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_flhyq"]
+font_size = 12
+font_color = Color(0, 0, 0, 1)
+
+[node name="Button" type="Button"]
+custom_minimum_size = Vector2(182, 182)
+anchors_preset = -1
+anchor_right = 0.142
+anchor_bottom = 0.253
+offset_right = 0.23999
+offset_bottom = -0.160019
+script = ExtResource("1_d5bfc")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(80, 180)
+layout_mode = 2
+offset_left = 1.0
+offset_top = 2.0
+offset_right = 181.0
+offset_bottom = 182.0
+texture = ExtResource("2_flhyq")
+expand_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+z_index = 1
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+offset_left = 31.0
+offset_top = 28.0
+offset_right = 151.0
+offset_bottom = 155.0
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="VBoxContainer/AspectRatioContainer"]
+layout_mode = 2
+texture = ExtResource("2_ly35o")
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Example"
+label_settings = SubResource("LabelSettings_3f2ek")
+horizontal_alignment = 1
+
+[node name="TeamLabel" type="Label" parent="."]
+z_index = 2
+layout_mode = 0
+offset_left = 60.0
+offset_top = 154.0
+offset_right = 124.0
+offset_bottom = 171.0
+text = "Team A"
+label_settings = SubResource("LabelSettings_flhyq")
+horizontal_alignment = 1
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

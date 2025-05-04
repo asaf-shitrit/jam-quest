@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://dkpf600oiefn6"]
+
+[ext_resource type="Script" uid="uid://bhnaxdi34siol" path="res://src/start/options_container.gd" id="1_hmk2m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8nltb"]
+font_size = 128
+
+[node name="OptionsContainer" type="VBoxContainer"]
+script = ExtResource("1_hmk2m")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Jam Quest"
+label_settings = SubResource("LabelSettings_8nltb")
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "Start Game"
+
+[node name="Spacer2" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="Settings" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "Settings"
+
+[node name="Spacer3" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="Quit" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "Quit"
+
+[connection signal="pressed" from="StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]

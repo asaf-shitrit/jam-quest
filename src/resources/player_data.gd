@@ -28,3 +28,6 @@ class_name PlayerData
 
 # visuals
 @export var character_texture: Texture2D
+
+func calculate_rating():
+	return 99
