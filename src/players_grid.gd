@@ -74,7 +74,6 @@ func _on_player_pressed(player: PlayerData):
 		# toggle the player
 		var team = _get_player_team(player)
 		
-		var team_ref = []
 		if team == Globals.Team.A:
 			var index = teamA.find(player)
 			teamA.remove_at(index)
