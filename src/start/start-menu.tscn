@@ -21,4 +21,5 @@ layout_mode = 2
 layout_mode = 2
 
 [connection signal="option_select" from="CenterContainer/OptionsContainer" to="." method="_on_options_container_option_select"]
+[connection signal="back_pressed" from="CenterContainer/PlayersGrid" to="." method="_on_players_grid_back_pressed"]
 [connection signal="selection_finished" from="CenterContainer/PlayersGrid" to="." method="_on_players_grid_selection_finished"]

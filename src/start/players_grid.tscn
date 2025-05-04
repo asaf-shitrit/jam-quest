@@ -38,9 +38,18 @@ layout_mode = 2
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="VBoxContainer/CenterContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="Back" type="Button" parent="VBoxContainer/CenterContainer/HBoxContainer"]
+custom_minimum_size = Vector2(250, 48)
+layout_mode = 2
+text = "Back"
+
+[node name="Finish" type="Button" parent="VBoxContainer/CenterContainer/HBoxContainer"]
 custom_minimum_size = Vector2(250, 48)
 layout_mode = 2
 text = "Finish"
 
-[connection signal="pressed" from="VBoxContainer/CenterContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/CenterContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="VBoxContainer/CenterContainer/HBoxContainer/Finish" to="." method="_on_finish_pressed"]

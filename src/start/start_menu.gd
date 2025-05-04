@@ -30,3 +30,8 @@ func _on_players_grid_selection_finished(teamA: TeamData, teamB: TeamData) -> vo
 	
 	emit_signal("start_match", scene)
 	
+
+
+func _on_players_grid_back_pressed() -> void:
+	$CenterContainer/PlayersGrid.visible = false
+	$CenterContainer/OptionsContainer.visible = true
