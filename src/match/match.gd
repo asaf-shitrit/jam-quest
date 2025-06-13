@@ -18,7 +18,7 @@ enum MatchCourtSize {
 
 @export var court_scene: PackedScene
 var court_node: Court
-@export var camera: GameCamera
+#@export var camera: GameCamera
 
 @export var scoreLimit := 21
 var teamA_Score := 0
@@ -43,13 +43,14 @@ func _ready() -> void:
 	setup_players()
 	setup_game_indicators()
 	start_match()
+	
+	#$PhantomCamera2D.follow_mode = PhantomCamera2D.FollowMode.GROUP
+	#$PhantomCamera2D.auto_zoom = true
+	#$PhantomCamera2D.auto_zoom_min = 2.0
+	#$PhantomCamera2D.auto_zoom_max = 4.0
 
 
-func _process(delta: float) -> void:
-	
-	if Input.is_action_just_released("ui_open_menu"):
-		$GameCamera/GamePauseMenu.visible = !$GameCamera/GamePauseMenu.visible
-	
+
 func update_players_positions():	
 	
 	var team_with_ball = get_team_controlling_ball()
@@ -104,7 +105,7 @@ func setup_court():
 	
 func _on_basket_made(ball: Basketball):
 	score_points(ball.creator.team, ball._get_shot_value())
-	camera._shake(1.0, 0.1)
+	#camera._shake(1.0, 0.1)
 
 
 func score_points(team: Globals.Team, points: int) -> void:
@@ -193,8 +194,7 @@ func setup_game_indicators():
 	score_panel.position.x = 20
 	add_child(score_panel)
 	
-	
-	$GameCamera/GamePauseMenu.visible = false
+	%GamePauseMenu.visible = false
 
 	
 
@@ -217,13 +217,26 @@ func start_match() -> void:
 	is_started = true
 
 	update_players_positions()
-	camera._focus_on_game_area()
+	#camera._focus_on_game_area()
+	
+	var players: Array[Player] = _get_players()
+	
+	var targets: Array[Node2D] = [
+		court_node.right_basket,
+	]
+	
+	targets.append_array(_get_players())
+	
+	#$PhantomCamera2D.set_follow_targets(targets)
 
 	print("Match started!")
 	emit_signal("match_started")
 
 func _get_players():
-	return $Players.get_children() as Array[Player]
+	var players: Array[Player] = []
+	for child in $Players.get_children():
+		players.push_back(child as Player)
+	return players
 	
 func _get_defending_players():
 	return _get_players().filter(func (p: Player): return p.is_on_defense())

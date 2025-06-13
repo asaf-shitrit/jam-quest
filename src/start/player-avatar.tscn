@@ -12,54 +12,61 @@ font_size = 12
 font_color = Color(0, 0, 0, 1)
 
 [node name="Button" type="Button"]
-custom_minimum_size = Vector2(182, 182)
-anchors_preset = -1
-anchor_right = 0.142
-anchor_bottom = 0.253
-offset_right = 0.23999
-offset_bottom = -0.160019
+custom_minimum_size = Vector2(160, 160)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_d5bfc")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(80, 180)
-layout_mode = 2
-offset_left = 1.0
-offset_top = 2.0
-offset_right = 181.0
-offset_bottom = 182.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_flhyq")
 expand_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-z_index = 1
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-offset_left = 31.0
-offset_top = 28.0
-offset_right = 151.0
-offset_bottom = 155.0
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+z_index = 1
+layout_mode = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Avatar" type="TextureRect" parent="VBoxContainer/AspectRatioContainer"]
+[node name="Avatar" type="TextureRect" parent="MarginContainer/VBoxContainer/AspectRatioContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("2_ly35o")
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Example"
 label_settings = SubResource("LabelSettings_3f2ek")
 horizontal_alignment = 1
 
-[node name="TeamLabel" type="Label" parent="."]
+[node name="TeamLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 2
-layout_mode = 0
-offset_left = 60.0
-offset_top = 154.0
-offset_right = 124.0
-offset_bottom = 171.0
+layout_mode = 2
 text = "Team A"
 label_settings = SubResource("LabelSettings_flhyq")
 horizontal_alignment = 1

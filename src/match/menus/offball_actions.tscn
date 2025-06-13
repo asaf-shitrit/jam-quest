@@ -29,5 +29,6 @@ offset_right = 30.36
 offset_bottom = 17.0
 text = "Pass
 "
+flat = true
 
 [connection signal="pressed" from="Panel/PassButton" to="." method="_on_button_pressed"]

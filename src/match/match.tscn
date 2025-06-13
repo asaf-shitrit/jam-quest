@@ -1,55 +1,52 @@
-[gd_scene load_steps=7 format=3 uid="uid://cb8hy18vrvpsf"]
+[gd_scene load_steps=6 format=3 uid="uid://cb8hy18vrvpsf"]
 
 [ext_resource type="Script" uid="uid://brbqsiufrws83" path="res://src/match/match.gd" id="1_fg311"]
 [ext_resource type="PackedScene" uid="uid://bjrnxsxsrsqri" path="res://src/match/court/city/city_court.tscn" id="2_gwgiy"]
 [ext_resource type="Resource" uid="uid://5ckeo76lketm" path="res://src/resources/teams/bronny-only-team.tres" id="3_5vaqo"]
 [ext_resource type="Resource" uid="uid://c78xvj0sbrs7o" path="res://src/resources/teams/austin-only-team.tres" id="4_7e67n"]
 [ext_resource type="PackedScene" uid="uid://p615165ww115" path="res://src/characters/player/player.tscn" id="4_fg311"]
-[ext_resource type="Script" uid="uid://b2qbp5uospbn6" path="res://src/global/camera.gd" id="6_ro1tw"]
 
-[node name="Match" type="Node" node_paths=PackedStringArray("camera")]
+[node name="Match" type="Node"]
 script = ExtResource("1_fg311")
 court_scene = ExtResource("2_gwgiy")
-camera = NodePath("GameCamera")
 teamA = ExtResource("3_5vaqo")
 teamB = ExtResource("4_7e67n")
 player_scene = ExtResource("4_fg311")
 disable_turnovers = true
 
-[node name="GameCamera" type="Camera2D" parent="." node_paths=PackedStringArray("game")]
-script = ExtResource("6_ro1tw")
-game = NodePath("..")
-metadata/_custom_type_script = "uid://b2qbp5uospbn6"
+[node name="Players" type="Node" parent="."]
 
-[node name="GamePauseMenu" type="CenterContainer" parent="GameCamera"]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GamePauseMenu" type="CenterContainer" parent="CanvasLayer"]
+unique_name_in_owner = true
 z_index = 50
-anchors_preset = -1
-anchor_right = 0.085
-offset_left = -194.0
-offset_top = -115.0
-offset_right = 449.0
-offset_bottom = 246.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameCamera/GamePauseMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GamePauseMenu"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="GameCamera/GamePauseMenu/VBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/GamePauseMenu/VBoxContainer"]
 layout_mode = 2
 text = "Match Paused"
 
-[node name="LeaveMatchButton" type="Button" parent="GameCamera/GamePauseMenu/VBoxContainer"]
+[node name="LeaveMatchButton" type="Button" parent="CanvasLayer/GamePauseMenu/VBoxContainer"]
 layout_mode = 2
 text = "Leave match"
 
-[node name="QuitGameButton" type="Button" parent="GameCamera/GamePauseMenu/VBoxContainer"]
+[node name="QuitGameButton" type="Button" parent="CanvasLayer/GamePauseMenu/VBoxContainer"]
 layout_mode = 2
 text = "Quit Game
 "
 
-[node name="Players" type="Node" parent="."]
+[node name="Camera2D" type="Camera2D" parent="."]
 
-[connection signal="pressed" from="GameCamera/GamePauseMenu/VBoxContainer/LeaveMatchButton" to="." method="_on_leave_match_button_pressed"]
-[connection signal="pressed" from="GameCamera/GamePauseMenu/VBoxContainer/QuitGameButton" to="." method="_on_quit_game_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GamePauseMenu/VBoxContainer/LeaveMatchButton" to="." method="_on_leave_match_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GamePauseMenu/VBoxContainer/QuitGameButton" to="." method="_on_quit_game_button_pressed"]
